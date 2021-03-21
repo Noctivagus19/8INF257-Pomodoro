@@ -1,18 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<LinearLayout
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <ProgressBar
+                    android:id="@+id/timer_progress_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="500dp"
+                    android:indeterminate="false"
+                    android:progressDrawable="@drawable/circular_progress_bar"
+                    android:background="@drawable/circle_shape"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:max="100"
+                    android:progress="65" />
+
+                <TextView
+                    android:id="@+id/time_display"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@id/timer_progress_bar"
+                    android:layout_alignTop="@id/timer_progress_bar"
+                    android:layout_alignEnd="@id/timer_progress_bar"
+                    android:layout_alignBottom="@id/timer_progress_bar"
+                    android:gravity="center"
+                    android:text="4:20"
+                    android:textSize="50sp" />
+
+                <TextView
+                    android:id="@+id/task_display"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@id/timer_progress_bar"
+                    android:layout_alignTop="@id/timer_progress_bar"
+                    android:layout_alignEnd="@id/timer_progress_bar"
+                    android:layout_alignBottom="@id/timer_progress_bar"
+                    android:layout_marginTop="100dp"
+                    android:gravity="center"
+                    android:text="Task name here"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/task_total_display"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@id/timer_progress_bar"
+                    android:layout_alignTop="@id/timer_progress_bar"
+                    android:layout_alignEnd="@id/timer_progress_bar"
+                    android:layout_alignBottom="@id/timer_progress_bar"
+                    android:layout_marginTop="160dp"
+                    android:gravity="center"
+                    android:text="2/3"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="120dp">
+
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="80"
+                            android:layout_marginHorizontal="20dp"
+                            android:layout_gravity="center"
+                            android:text="@string/left_btn" />
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="80"
+                            android:layout_marginHorizontal="20dp"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/right_btn" />
+                </LinearLayout>
+        </RelativeLayout>
+
+
+</LinearLayout>
