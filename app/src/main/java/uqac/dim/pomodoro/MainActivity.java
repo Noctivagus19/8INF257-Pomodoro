@@ -59,8 +59,9 @@ public class MainActivity extends AppCompatActivity {
 
                if (intent.hasExtra("RAWTIME")) {
                    String rawTime = intent.getStringExtra("RAWTIME");
+                   Log.i("DIM", rawTime);
                    if (rawTime != null) {
-                       double totalTime = 5000.0;
+                       double totalTime = 10000.0;
                        int thousand = Integer.parseInt(rawTime)/1000*1000;
 
                        int completionPercentage = (int)(Math.round(((long) thousand / totalTime) * 100.0));

@@ -7,7 +7,11 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 
@@ -16,13 +20,14 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import java.lang.invoke.MethodHandle;
 import java.util.concurrent.TimeUnit;
 
 public class CountdownTimerService extends Service {
    public static final String TIME_INFO = "time_info";
    private static final String NOTIFICATION_ID_STRING = "0";
 
-   private CounterClass timer;
+   private CountDownTimer timer;
 
    @Override
    public void onCreate() {
@@ -37,7 +42,38 @@ public class CountdownTimerService extends Service {
 
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
-      timer = new CounterClass(5000, 1000);
+
+      timer = new CountDownTimer(10000, 1000) {
+         @Override
+         public void onTick(long mMillisUntilFinished) {
+            String hh = String.format("%02d", TimeUnit.MILLISECONDS.toHours(mMillisUntilFinished));
+            String mm = String.format("%02d", TimeUnit.MILLISECONDS.toMinutes(mMillisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(mMillisUntilFinished)));
+            String ss = String.format("%02d", TimeUnit.MILLISECONDS.toSeconds(mMillisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(mMillisUntilFinished)));
+
+            String hms = "";
+
+            if (!hh.equals("00")) {
+               hms = hms + hh + ":";
+            }
+
+            hms = hms + mm + ":" + ss;
+
+            Intent timerInfoIntent = new Intent(TIME_INFO);
+            timerInfoIntent.putExtra("VALUE", hms);
+            timerInfoIntent.putExtra("RAWTIME", ""+mMillisUntilFinished);
+            LocalBroadcastManager.getInstance(CountdownTimerService.this)
+                    .sendBroadcast(timerInfoIntent);
+         }
+
+         @Override
+         public void onFinish() {
+            Intent timerInfoIntent = new Intent(TIME_INFO);
+            timerInfoIntent.putExtra("VALUE", "Completed");
+            timerInfoIntent.putExtra("RAWTIME", "0");
+            LocalBroadcastManager.getInstance(CountdownTimerService.this)
+                    .sendBroadcast(timerInfoIntent);
+         }
+      };
       timer.start();
 
       startForeground(101, getNotification("Pomodoro"));
@@ -79,39 +115,117 @@ public class CountdownTimerService extends Service {
       LocalBroadcastManager.getInstance(CountdownTimerService.this).sendBroadcast(timerInfoIntent);
    }
 
-   public class CounterClass extends CountDownTimer {
+   public abstract class CountDownTimer {
+      private final long mMillisInFuture;
+      private final long mCountdownInterval;
+      private long mStopTimeInFuture;
+      private  long mPauseTime;
+      private boolean mCancelled = false;
+      private boolean mPaused = false;
 
-      public CounterClass(long millisInFuture, long countDownInterval) {
-         super(millisInFuture, countDownInterval);
+
+      /*
+       * @param millisInFuture: Number of millis in the future from the call
+       *    to {@link #start()} until the countdown is done and {@link #onFinish()}
+       *    is called.
+       *
+       * @param countDownInterval: The interval along the way to receive
+       *    {@link #onTick(long)} callbacks.
+       */
+      public CountDownTimer(long millisInFuture, long countDownInterval) {
+          mMillisInFuture = millisInFuture;
+          mCountdownInterval = countDownInterval;
       }
 
-      @Override
-      public void onTick(long millisUntilFinished) {
-         String hh = String.format("%02d", TimeUnit.MILLISECONDS.toHours(millisUntilFinished));
-         String mm = String.format("%02d", TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)));
-         String ss = String.format("%02d", TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
+      /*
+       * Cancel the countdown
+       *
+       * Should not be called inside the CounterClass threads
+       */
+      public final void cancel() {
+         mHandler.removeMessages(MSG);
+         mCancelled = true;
+      }
 
-         String hms = "";
-
-         if (!hh.equals("00")) {
-            hms = hms + hh + ":";
+      /*
+       * Start the timer.
+       */
+      public synchronized final CountDownTimer start() {
+         if (mMillisInFuture <= 0) {
+            onFinish();
+            return this;
          }
-
-         hms = hms + mm + ":" + ss;
-
-         Intent timerInfoIntent = new Intent(TIME_INFO);
-         timerInfoIntent.putExtra("VALUE", hms);
-         timerInfoIntent.putExtra("RAWTIME", ""+millisUntilFinished);
-         LocalBroadcastManager.getInstance(CountdownTimerService.this)
-                 .sendBroadcast(timerInfoIntent);
+         mStopTimeInFuture = SystemClock.elapsedRealtime() + mMillisInFuture;
+         mHandler.sendMessage(mHandler.obtainMessage(MSG));
+         mCancelled = false;
+         mPaused = false;
+         return this;
       }
 
-      @Override
-      public void onFinish() {
-         Intent timerInfoIntent = new Intent(TIME_INFO);
-         timerInfoIntent.putExtra("VALUE", "Completed");
-         LocalBroadcastManager.getInstance(CountdownTimerService.this)
-                 .sendBroadcast(timerInfoIntent);
+      /*
+       * Pause the countdown.
+       */
+      public long pause() {
+         mPauseTime = mStopTimeInFuture - SystemClock.elapsedRealtime();
+         mPaused = true;
+         return mPauseTime;
       }
+
+      /*
+       * Resume the countdown.
+       */
+      public long resume() {
+         mStopTimeInFuture = mPauseTime + SystemClock.elapsedRealtime();
+         mPaused = false;
+         mHandler.sendMessage(mHandler.obtainMessage(MSG));
+         return mPauseTime;
+      }
+
+      /*
+       * Callback fired on regular interval.
+       *
+       * @param millisUntilFinished: The amount of time until finished.
+       */
+      public abstract void onTick(long mMillisUntilFinished);
+
+      /*
+       * Callback fired when the time is up.
+       */
+      public abstract void onFinish();
+
+      private static final int MSG = 1;
+
+      /*
+       * Handles the counting down
+       */
+      private final Handler mHandler = new Handler(Looper.getMainLooper()) {
+
+         @Override
+         public void handleMessage(Message msg) {
+            synchronized (CountDownTimer.this) {
+               if (!mPaused) {
+                  final long millisLeft = mStopTimeInFuture - SystemClock.elapsedRealtime();
+
+                  if (millisLeft <=0) {
+                     onFinish();
+                  } else if (millisLeft < mCountdownInterval) {
+                     sendMessageDelayed(obtainMessage(MSG), millisLeft);
+                  } else {
+                     long lastTickStart = SystemClock.elapsedRealtime();
+                     onTick(millisLeft);
+
+                     long delay = lastTickStart + mCountdownInterval - SystemClock.elapsedRealtime();
+
+                     // if user's clock took more than interval to complete, skip to next interval
+                     while (delay < 0) delay += mCountdownInterval;
+
+                     if (!mCancelled) {
+                      sendMessageDelayed(obtainMessage(MSG), delay);
+                     }
+                  }
+               }
+            }
+         }
+      };
    }
 }
