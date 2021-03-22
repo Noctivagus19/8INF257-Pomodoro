@@ -71,7 +71,8 @@ public class CountdownTimerService extends Service {
             hms = hms + mm + ":" + ss;
 
             Intent timerInfoIntent = new Intent(TIME_INFO);
-            timerInfoIntent.putExtra("VALUE", hms);
+            timerInfoIntent.putExtra("TIME", hms);
+            timerInfoIntent.putExtra("STATUS", "RUNNING");
             timerInfoIntent.putExtra("RAWTIME", ""+mMillisUntilFinished);
             LocalBroadcastManager.getInstance(CountdownTimerService.this)
                     .sendBroadcast(timerInfoIntent);
@@ -80,8 +81,9 @@ public class CountdownTimerService extends Service {
          @Override
          public void onFinish() {
             Intent timerInfoIntent = new Intent(TIME_INFO);
-            timerInfoIntent.putExtra("VALUE", "Completed");
+            timerInfoIntent.putExtra("STATUS", "COMPLETED");
             timerInfoIntent.putExtra("RAWTIME", "0");
+            timerInfoIntent.putExtra("TIME", "00:00");
             LocalBroadcastManager.getInstance(CountdownTimerService.this)
                     .sendBroadcast(timerInfoIntent);
          }
@@ -124,20 +126,20 @@ public class CountdownTimerService extends Service {
 
    @Override
    public void onDestroy() {
+      Intent timerInfoIntent = new Intent(TIME_INFO);
+      timerInfoIntent.putExtra("STATUS", "STOPPED");
+      LocalBroadcastManager.getInstance(CountdownTimerService.this).sendBroadcast(timerInfoIntent);
       //TODO: remove that integer parsing
       mNM.cancel(Integer.parseInt(NOTIFICATION_ID_STRING));
       timer.cancel();
       super.onDestroy();
-      Intent timerInfoIntent = new Intent(TIME_INFO);
-      timerInfoIntent.putExtra("Value", "Stopped");
-      LocalBroadcastManager.getInstance(CountdownTimerService.this).sendBroadcast(timerInfoIntent);
    }
 
    public abstract class CountDownTimer {
       private final long mMillisInFuture;
       private final long mCountdownInterval;
       private long mStopTimeInFuture;
-      private  long mPauseTime;
+      private long mPauseTime;
       private boolean mCancelled = false;
       private boolean mPaused = false;
 
@@ -184,8 +186,12 @@ public class CountdownTimerService extends Service {
        * Pause the countdown.
        */
       public long pause() {
+         mHandler.removeMessages(MSG);
          mPauseTime = mStopTimeInFuture - SystemClock.elapsedRealtime();
          mPaused = true;
+         Intent timerInfoIntent = new Intent(TIME_INFO);
+         timerInfoIntent.putExtra("STATUS", "PAUSED");
+         LocalBroadcastManager.getInstance(CountdownTimerService.this).sendBroadcast(timerInfoIntent);
          return mPauseTime;
       }
 
@@ -196,6 +202,9 @@ public class CountdownTimerService extends Service {
          mStopTimeInFuture = mPauseTime + SystemClock.elapsedRealtime();
          mPaused = false;
          mHandler.sendMessage(mHandler.obtainMessage(MSG));
+         Intent timerInfoIntent = new Intent(TIME_INFO);
+         timerInfoIntent.putExtra("STATUS", "RUNNING");
+         LocalBroadcastManager.getInstance(CountdownTimerService.this).sendBroadcast(timerInfoIntent);
          return mPauseTime;
       }
 
