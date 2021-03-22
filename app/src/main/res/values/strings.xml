@@ -4,4 +4,9 @@
     <string name="right_btn">STOP</string>
     <string name="left_btn">START</string>
     <string name="option_btn_descr">Button to parameters</string>
+    <string name="pause_btn_lbl">PAUSE</string>
+    <string name="resume_btn_lbl">RESUME</string>
+    <string name="done_btn_lbl">DONE</string>
+    <string name="start_btn_lbl">START</string>
+    <string name="stop_btn_lbl">STOP</string>
 </resources>
