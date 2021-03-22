@@ -3,4 +3,5 @@
     <string name="start_btn">START</string>
     <string name="right_btn">STOP</string>
     <string name="left_btn">START</string>
+    <string name="option_btn_descr">Button to parameters</string>
 </resources>
