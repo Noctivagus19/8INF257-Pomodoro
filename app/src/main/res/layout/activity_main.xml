@@ -19,7 +19,7 @@
                     android:background="@drawable/circle_shape"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:max="100"
-                    android:progress="65" />
+                    android:progress="100" />
 
                 <TextView
                     android:id="@+id/time_display"
@@ -30,7 +30,7 @@
                     android:layout_alignEnd="@id/timer_progress_bar"
                     android:layout_alignBottom="@id/timer_progress_bar"
                     android:gravity="center"
-                    android:text="4:20"
+                    android:text="25:00"
                     android:textSize="50sp" />
 
                 <TextView
@@ -72,14 +72,16 @@
                             android:layout_weight="80"
                             android:layout_marginHorizontal="20dp"
                             android:layout_gravity="center"
-                            android:text="@string/left_btn" />
+                            android:text="@string/left_btn"
+                            android:onClick="startTimer"/>
                         <Button
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="80"
                             android:layout_marginHorizontal="20dp"
                             android:layout_gravity="center_horizontal"
-                            android:text="@string/right_btn" />
+                            android:text="@string/right_btn"
+                            android:onClick="pauseTimer"/>
                 </LinearLayout>
         </RelativeLayout>
 
