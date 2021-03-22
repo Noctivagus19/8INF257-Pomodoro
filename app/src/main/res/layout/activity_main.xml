@@ -81,7 +81,7 @@
                             android:layout_marginHorizontal="20dp"
                             android:layout_gravity="center_horizontal"
                             android:text="@string/right_btn"
-                            android:onClick="stopTimer"/>
+                            android:onClick="pauseTimer"/>
                 </LinearLayout>
         </RelativeLayout>
 

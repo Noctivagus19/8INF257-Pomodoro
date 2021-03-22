@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
@@ -26,19 +27,30 @@ import java.util.concurrent.TimeUnit;
 public class CountdownTimerService extends Service {
    public static final String TIME_INFO = "time_info";
    private static final String NOTIFICATION_ID_STRING = "0";
+   private NotificationManager mNM;
 
    private CountDownTimer timer;
 
+   public class LocalBinder extends Binder {
+      CountdownTimerService getService() {
+         return CountdownTimerService.this;
+      }
+   }
+
    @Override
    public void onCreate() {
-      super.onCreate();
+      mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+
+      showNotification();
    }
 
    @Nullable
    @Override
    public IBinder onBind(Intent intent) {
-      return null;
+      return mBinder;
    }
+
+   private final IBinder mBinder = new LocalBinder();
 
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
@@ -76,17 +88,21 @@ public class CountdownTimerService extends Service {
       };
       timer.start();
 
-      startForeground(101, getNotification("Pomodoro"));
-
       return START_NOT_STICKY;
    }
 
-   public Notification getNotification(String contentText) {
-      Intent notificationIntent = new Intent(this, MainActivity.class);
-       PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-               notificationIntent, 0);
+   public void pauseTimer() {
+      timer.pause();
+   }
 
-      NotificationManager mNotifyManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+   public void resumeTimer() {
+      timer.resume();
+   }
+
+   public void showNotification() {
+      Intent notificationIntent = new Intent(this, MainActivity.class);
+      PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+               notificationIntent, 0);
 
       NotificationChannel channel = new NotificationChannel(
               NOTIFICATION_ID_STRING,
@@ -94,20 +110,22 @@ public class CountdownTimerService extends Service {
               NotificationManager.IMPORTANCE_DEFAULT
       );
       channel.setDescription("Pomodoro timer");
-      mNotifyManager.createNotificationChannel(channel);
+      mNM.createNotificationChannel(channel);
 
       NotificationCompat.Builder notifyBuilder =
               new NotificationCompat.Builder(this, NOTIFICATION_ID_STRING)
               .setContentTitle("Pomodoro titmer")
-              .setContentText(contentText)
+              .setSmallIcon(R.drawable.ic_launcher_foreground)
+              .setContentText("Pomodoro timer is running")
               .setContentIntent(pendingIntent);
 
-      NotificationManagerCompat nm = NotificationManagerCompat.from(this);
-      return notifyBuilder.build();
+      mNM.notify(0, notifyBuilder.build());
    }
 
    @Override
    public void onDestroy() {
+      //TODO: remove that integer parsing
+      mNM.cancel(Integer.parseInt(NOTIFICATION_ID_STRING));
       timer.cancel();
       super.onDestroy();
       Intent timerInfoIntent = new Intent(TIME_INFO);
