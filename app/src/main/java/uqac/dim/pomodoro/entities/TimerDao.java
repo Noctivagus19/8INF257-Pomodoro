@@ -1,0 +1,19 @@
+package uqac.dim.pomodoro.entities;
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+
+import java.util.List;
+
+@Dao
+public interface TimerDao {
+    @Query("SELECT * FROM timer")
+    List<Timer> getAllTimers();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void addTimer(Timer timer);
+
+    @Query("SELECT * FROM timer WHERE id IS :id LIMIT 1")
+    Timer findById(int id);
+}

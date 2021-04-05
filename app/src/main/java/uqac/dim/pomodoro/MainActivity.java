@@ -17,10 +17,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.util.List;
+
 import uqac.dim.pomodoro.CountdownTimerService;
+import uqac.dim.pomodoro.entities.Category;
+import uqac.dim.pomodoro.entities.PomodoroDB;
+import uqac.dim.pomodoro.entities.Timer;
+import uqac.dim.pomodoro.entities.Todo;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +36,11 @@ public class MainActivity extends AppCompatActivity {
 
     private TimerStatusReceiver receiver;
     private String timerStatus = "STOPPED";
+
+    private PomodoroDB pdb;
+    private Todo todo;
+    private Timer timer;
+    private Category category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +55,39 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener((View.OnClickListener) this::onRightClick);
 
         initializeTimer();
+
+        pdb = PomodoroDB.getDatabase(getApplicationContext());
+        testInsertion();
+        testRecherche();
+
+    }
+
+    private void testInsertion() {
+        //List<Timer> timers = pdb.timerDao().getAllTimers();
+        pdb.timerDao().addTimer(new Timer(1, 1000000000, 10000, 100000,100000));
+        for (Timer timer : pdb.timerDao().getAllTimers())
+            Toast.makeText(this, "INSERTION : " + timer.toString(), Toast.LENGTH_SHORT).show();
+
+        //List<Category> categories = pdb.categoryDao().getAllCategories();
+        pdb.categoryDao().addCategory(new Category(1, "Work", "Active"));
+        for (Category category: pdb.categoryDao().getAllCategories())
+            Toast.makeText(this, "INSERTION : " + category.toString(), Toast.LENGTH_SHORT).show();
+
+        pdb.todoDao().addTodo(new Todo(1, "Ceci est un Todo", 1, 1));
+        for (Todo todo: pdb.todoDao().getAllTodos())
+            Toast.makeText(this, "INSERTION : " + todo.toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    private void testRecherche() {
+
+        timer = pdb.timerDao().findById(1);
+        Toast.makeText(this, "RECHERCHE: " + timer.toString(), Toast.LENGTH_SHORT).show();
+
+        category = pdb.categoryDao().findById(1);
+        Toast.makeText(this, "RECHERCHE: " + category.toString(), Toast.LENGTH_SHORT).show();
+
+        todo = pdb.todoDao().findById(1);
+        Toast.makeText(this, "RECHERCHE: " + todo.toString(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
