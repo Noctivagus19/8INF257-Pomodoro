@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo;
 
 @Entity
 public class Timer {
+    //@PrimaryKey(autoGenerate = true)
     @PrimaryKey
     public int id;
 

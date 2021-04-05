@@ -13,6 +13,7 @@ import androidx.room.ForeignKey;
         childColumns = "fk_timerId")
 })
 public class Todo {
+    //@PrimaryKey(autoGenerate = true)
     @PrimaryKey
     public int id;
 

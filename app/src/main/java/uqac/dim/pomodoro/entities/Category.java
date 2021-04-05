@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo;
 
 @Entity
 public class Category {
+    //@PrimaryKey(autoGenerate = true)
     @PrimaryKey
     public int id;
 
