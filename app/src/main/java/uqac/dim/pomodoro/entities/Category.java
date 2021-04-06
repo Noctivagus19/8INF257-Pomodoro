@@ -5,8 +5,7 @@ import androidx.room.ColumnInfo;
 
 @Entity
 public class Category {
-    //@PrimaryKey(autoGenerate = true)
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     public int id;
 
     @ColumnInfo(name = "name")
@@ -15,8 +14,7 @@ public class Category {
     @ColumnInfo(name = "status")
     public String status;
 
-    public Category(int id, String name, String status) {
-        this.id = id;
+    public Category(String name, String status) {
         this.name = name;
         this.status = status;
     }
@@ -25,8 +23,29 @@ public class Category {
     public String toString() {
         return "Category{" +
                 "id=" + id +
-                ", nams='" + name + '\'' +
+                ", name='" + name + '\'' +
                 ", status='" + status + '\'' +
                 '}';
     }
+
+    public int getId(){
+        return this.id;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public String getName(){
+        return this.name;
+    }
+
+    public void setStatus(String status){
+        this.status = status;
+    }
+
+    public String getStatus(){
+        return this.status;
+    }
+
 }
