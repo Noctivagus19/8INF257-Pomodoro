@@ -34,6 +34,7 @@ import uqac.dim.pomodoro.entities.Todo;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int LAUNCH_MANAGETODOS_ACTIVITY = 1;
     private boolean mShouldUnbind;
     private CountdownTimerService mBoundService;
 
@@ -248,6 +249,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void startManageTodosActivity(View view) {
+        Intent i = new Intent(this, ManageTodosActivity.class);
+        //i.putExtra(EXTRA_SELECTED_CHOICE, selectedChoice);
+        startActivityForResult(i, LAUNCH_MANAGETODOS_ACTIVITY);
+    }
+
     private class TimerStatusReceiver extends BroadcastReceiver {
        @Override
        public void onReceive(Context context, Intent intent) {
@@ -266,6 +273,7 @@ public class MainActivity extends AppCompatActivity {
                    String rawTime = intent.getStringExtra("RAWTIME");
                    if (rawTime != null) {
                        double totalTime = 10000.0;
+                       Log.i("LOG", rawTime);
                        int thousand = Integer.parseInt(rawTime)/1000*1000;
 
                        int completionPercentage = (int)(Math.round(((long) thousand / totalTime) * 100.0));

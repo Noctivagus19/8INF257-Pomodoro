@@ -83,6 +83,16 @@
                             android:layout_gravity="center_horizontal"
                             android:text="@string/right_btn"
                             android:enabled="false"/>
+                        <Button
+                            android:id="@+id/startActivity"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="80"
+                            android:layout_marginHorizontal="20dp"
+                            android:layout_gravity="center_horizontal"
+                            android:text="MANAGE"
+                            android:enabled="true"
+                            android:onClick="startManageTodosActivity"/>
                 </LinearLayout>
         </RelativeLayout>
 
