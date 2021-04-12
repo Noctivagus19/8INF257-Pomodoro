@@ -18,6 +18,9 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.reginald.editspinner.EditSpinner;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -72,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
         testRecherche();
         testUpdate();
         testDelete();
-
     }
 
     private void testInsertion() {
@@ -92,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        pdb.todoDao().addTodo(new Todo( "Ceci est un Todo", currentDate, timers.get(0).getId(), categories.get(0).getId()));
-        pdb.todoDao().addTodo(new Todo( "Ceci est un autre Todo", currentDate, timers.get(0).getId(), categories.get(0).getId()));
+        pdb.todoDao().addTodo(new Todo( "Ceci est un Todo", currentDate, categories.get(0).getId()));
+        pdb.todoDao().addTodo(new Todo( "Ceci est un autre Todo", currentDate, categories.get(0).getId()));
         for (Todo todo: pdb.todoDao().getAllTodos()) {
             Log.i("LOG", "INSERTION TODO: " + todo.toString());
         }
@@ -104,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
         todo = pdb.todoDao().findById(todos.get(0).getId());
         Log.i("LOG", "Recherche TODO : " + todo.toString());
 
-        timer = pdb.timerDao().findById(todo.getTimerId());
-        Log.i("LOG", "Timer of TODO : " + timer.toString());
+        //timer = pdb.timerDao().findById(todo.getTimerId());
+        //Log.i("LOG", "Timer of TODO : " + timer.toString());
 
         category = pdb.categoryDao().findById(todo.getCategoryId());
         Log.i("LOG", "Category of TODO : " + category.toString());
@@ -251,8 +253,31 @@ public class MainActivity extends AppCompatActivity {
 
     public void startManageTodosActivity(View view) {
         Intent i = new Intent(this, ManageTodosActivity.class);
-        //i.putExtra(EXTRA_SELECTED_CHOICE, selectedChoice);
         startActivityForResult(i, LAUNCH_MANAGETODOS_ACTIVITY);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i("LOG", "MAIN ACTIVITYRESULT");
+
+        if (requestCode == LAUNCH_MANAGETODOS_ACTIVITY) {
+            if(resultCode == MainActivity.RESULT_OK){
+                int todoId =data.getIntExtra(ManageTodosActivity.EXTRA_TODO_ID, -1);
+                String todoDescription = data.getStringExtra(ManageTodosActivity.EXTRA_TODO_DESCRIPTION);
+                Log.i("LOG", "EXTRA RECU : TODO ID:" + todoId);
+                Log.i("LOG", "EXTRA RECU : TODO DESCRIPTION:" + todoDescription);
+                updateTaskDisplay(todoDescription);
+            }
+            if (resultCode == MainActivity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }//onActivityResult
+
+    public void updateTaskDisplay(String todoDescription){
+        TextView tvTaskDisplay = (TextView)findViewById(R.id.task_display);
+        tvTaskDisplay.setText(todoDescription);
     }
 
     private class TimerStatusReceiver extends BroadcastReceiver {

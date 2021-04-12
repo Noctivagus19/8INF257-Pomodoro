@@ -6,13 +6,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/editText1"
+
+    <com.reginald.editspinner.EditSpinner
+        android:id="@+id/edit_spinner_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPassword">
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/custom_editor_bkg"
+        android:hint="enter custom text here"
+        android:textColorHint="#aa828282"
+        android:textSize="18dp"
+        android:padding="8dp"
+        />
 
+
+    <EditText
+        android:id="@+id/addTodoDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10">
         <requestFocus />
     </EditText>
 

@@ -29,7 +29,7 @@ public interface TodoDao {
             "Todo.description, " +
             "Todo.date, " +
             "Todo.fk_categoryId, " +
-            "Todo.fk_timerId, " +
+            //"Todo.fk_timerId, " +
             "Todo.completionTime " +
             "FROM todo " +
             "WHERE Todo.id=:id"

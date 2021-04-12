@@ -12,14 +12,14 @@
 
                 <ProgressBar
                     android:id="@+id/timer_progress_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="500dp"
-                    android:indeterminate="false"
-                    android:progressDrawable="@drawable/circular_progress_bar"
                     android:background="@drawable/circle_shape"
-                    style="?android:attr/progressBarStyleHorizontal"
+                    android:indeterminate="false"
                     android:max="100"
-                    android:progress="100" />
+                    android:progress="100"
+                    android:progressDrawable="@drawable/circular_progress_bar" />
 
                 <TextView
                     android:id="@+id/time_display"
@@ -62,39 +62,43 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:orientation="horizontal"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="120dp">
+                    android:layout_marginBottom="120dp"
+                    android:orientation="horizontal">
 
                         <Button
                             android:id="@+id/leftButton"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="80"
-                            android:layout_marginHorizontal="20dp"
                             android:layout_gravity="center"
+                            android:layout_marginHorizontal="20dp"
+                            android:layout_weight="80"
                             android:text="@string/left_btn" />
+
                         <Button
                             android:id="@+id/rightButton"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="80"
-                            android:layout_marginHorizontal="20dp"
                             android:layout_gravity="center_horizontal"
-                            android:text="@string/right_btn"
-                            android:enabled="false"/>
+                            android:layout_marginHorizontal="20dp"
+                            android:layout_weight="80"
+                            android:enabled="false"
+                            android:text="@string/right_btn" />
+
                         <Button
                             android:id="@+id/startActivity"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="80"
-                            android:layout_marginHorizontal="20dp"
                             android:layout_gravity="center_horizontal"
-                            android:text="MANAGE"
+                            android:layout_marginHorizontal="20dp"
+                            android:layout_weight="80"
                             android:enabled="true"
-                            android:onClick="startManageTodosActivity"/>
+                            android:onClick="startManageTodosActivity"
+                            android:text="TODO"/>
+
                 </LinearLayout>
         </RelativeLayout>
+
 
 
 </LinearLayout>
