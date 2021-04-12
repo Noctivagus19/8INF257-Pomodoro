@@ -196,8 +196,6 @@ public class ManageTodosActivity extends ListActivity{
 
     @Override
     protected void onResume() {
-
-        //datasource.open();
         super.onResume();
     }
 
