@@ -278,8 +278,8 @@ public class MainActivity extends AppCompatActivity {
     }//onActivityResult
 
     public void updateTaskDisplay(String todoDescription){
-        TextView tvTaskDisplay = (TextView)findViewById(R.id.task_display);
-        tvTaskDisplay.setText(todoDescription);
+        TextView taskDisplay = (TextView)findViewById(R.id.task_display);
+        taskDisplay.setText(todoDescription);
     }
 
     private class TimerStatusReceiver extends BroadcastReceiver {

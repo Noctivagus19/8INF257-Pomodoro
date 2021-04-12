@@ -171,7 +171,7 @@ public class ManageTodosActivity extends ListActivity{
         switch (view.getId()) {
 
             case R.id.add:
-                TextView tvAddTodoDescription = (TextView)findViewById(R.id.addTodoDescription);
+                TextView addTodoDescription = (TextView)findViewById(R.id.addTodoDescription);
                 String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
                 String categoryName = mEditSpinnerCategories.getText().toString();
                 int categoryId = -1;
@@ -187,7 +187,7 @@ public class ManageTodosActivity extends ListActivity{
                     categoryId = insertedCat.getId();
                     initEditSpinner(categories.size()+1);
                 }
-                pdb.todoDao().addTodo(new Todo( tvAddTodoDescription.getText().toString(), currentDate, categoryId));
+                pdb.todoDao().addTodo(new Todo( addTodoDescription.getText().toString(), currentDate, categoryId));
                 todos = pdb.todoDao().getAllTodos();
                 adapter.add(todos.get(todos.size()-1));
                 break;
