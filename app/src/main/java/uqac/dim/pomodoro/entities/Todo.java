@@ -19,9 +19,6 @@ public class Todo {
     @ColumnInfo(name = "date")
     public String date;
 
-    //@ColumnInfo(name = "fk_timerId", index = true) //FK
-    //public int fk_timerId;
-
     @ColumnInfo(name = "fk_categoryId", index = true) //FK
     public int fk_categoryId;
 
@@ -32,7 +29,6 @@ public class Todo {
     public Todo(String description, String date, int fk_categoryId) {
         this.description = description;
         this.date = date;
-        //this.fk_timerId = fk_timerId;
         this.fk_categoryId = fk_categoryId;
         this.completionTime = -1;
     }
@@ -43,7 +39,6 @@ public class Todo {
                 "id=" + id +
                 ", description='" + description + '\'' +
                 ", date='" + date + '\'' +
-                //", fk_timerId='" + fk_timerId + '\'' +
                 ", fk_categoryId='" + fk_categoryId + '\'' +
                 ", completion time='" + completionTime + '\'' +
                 '}';
@@ -52,17 +47,6 @@ public class Todo {
     public int getId(){
         return this.id;
     }
-
-    /*
-    public void setTimerId(int timerId){
-        this.fk_timerId = timerId;
-    }
-
-    public int getTimerId(){
-        return this.fk_timerId;
-    }
-    */
-
 
     public void setCategoryId(int categoryId){
         this.fk_categoryId = categoryId;

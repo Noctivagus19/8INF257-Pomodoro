@@ -8,7 +8,7 @@
 
 
     <com.reginald.editspinner.EditSpinner
-        android:id="@+id/edit_spinner_2"
+        android:id="@+id/edit_spinner_categories"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"

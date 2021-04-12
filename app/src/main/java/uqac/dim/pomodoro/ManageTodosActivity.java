@@ -37,8 +37,7 @@ public class ManageTodosActivity extends ListActivity{
     public final static String EXTRA_TODO_ID = "uqac.dim.mafag.TODO_ID";
     public final static String EXTRA_TODO_DESCRIPTION = "uqac.dim.mafag.TODO_DESCRIPTION";
     private PomodoroDB pdb;
-    EditSpinner mEditSpinner1;
-    EditSpinner mEditSpinner2;
+    EditSpinner mEditSpinnerCategories;
     List<Todo> todos;
     List<Category> categories;
     private Todo todo;
@@ -75,21 +74,21 @@ public class ManageTodosActivity extends ListActivity{
 
     private void initEditSpinner(int selected) {
         categories = pdb.categoryDao().getAllCategories();
-        final String[] stringArray2 = new String[categories.size()];
+        final String[] stringArrayCategories = new String[categories.size()];
         for (int i=0; i< categories.size(); i++){
-            stringArray2[i] = categories.get(i).getName();
+            stringArrayCategories[i] = categories.get(i).getName();
         }
-        mEditSpinner2 = (EditSpinner) findViewById(R.id.edit_spinner_2);
-        mEditSpinner2.setDropDownDrawable(getResources().getDrawable(R.drawable.spinner), 25, 25);
-        mEditSpinner2.setDropDownDrawableSpacing(50);
-        mEditSpinner2.setAdapter(new BaseAdapter() {
+        mEditSpinnerCategories = (EditSpinner) findViewById(R.id.edit_spinner_categories);
+        mEditSpinnerCategories.setDropDownDrawable(getResources().getDrawable(R.drawable.spinner), 25, 25);
+        mEditSpinnerCategories.setDropDownDrawableSpacing(50);
+        mEditSpinnerCategories.setAdapter(new BaseAdapter() {
             public int getCount() {
-                return stringArray2.length;
+                return stringArrayCategories.length;
             }
 
             @Override
             public Object getItem(int position) {
-                return stringArray2[position];
+                return stringArrayCategories[position];
             }
 
             @Override
@@ -116,11 +115,11 @@ public class ManageTodosActivity extends ListActivity{
         });
 
         // it converts the item in the list to a string shown in EditText.
-        mEditSpinner2.setItemConverter(new EditSpinner.ItemConverter() {
+        mEditSpinnerCategories.setItemConverter(new EditSpinner.ItemConverter() {
             @Override
             public String convertItemToString(Object selectedItem) {
                 //if (selectedItem.toString().equals(categories.get(categories.size()-1))) {
-                if (selectedItem.toString().equals(stringArray2[stringArray2.length - 1])) {
+                if (selectedItem.toString().equals(stringArrayCategories[stringArrayCategories.length - 1])) {
                     return selectedItem.toString();
                 } else {
                     Log.d("LOG", "Selected item to string ");
@@ -130,18 +129,18 @@ public class ManageTodosActivity extends ListActivity{
         });
 
         // triggered when one item in the list is clicked
-        mEditSpinner2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mEditSpinnerCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d("LOG", "onItemClick() position = " + position);
-                if (position == stringArray2.length - 1) {
-                    showSoftInputPanel(mEditSpinner2);
+                if (position == stringArrayCategories.length - 1) {
+                    showSoftInputPanel(mEditSpinnerCategories);
                 }
             }
         });
 
 
-        mEditSpinner2.setOnShowListener(new EditSpinner.OnShowListener() {
+        mEditSpinnerCategories.setOnShowListener(new EditSpinner.OnShowListener() {
             @Override
             public void onShow() {
                 //hideSoftInputPanel();
@@ -149,13 +148,13 @@ public class ManageTodosActivity extends ListActivity{
         });
 
         // select the first item initially
-        mEditSpinner2.selectItem(selected);
+        mEditSpinnerCategories.selectItem(selected);
     }
 
     private void hideSoftInputPanel() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
-            imm.hideSoftInputFromWindow(mEditSpinner1.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(mEditSpinnerCategories.getWindowToken(), 0);
         }
     }
 
@@ -174,8 +173,7 @@ public class ManageTodosActivity extends ListActivity{
             case R.id.add:
                 TextView tvAddTodoDescription = (TextView)findViewById(R.id.addTodoDescription);
                 String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-                EditSpinner tvEditSpinner2 = (EditSpinner) findViewById(R.id.edit_spinner_2);
-                String categoryName = tvEditSpinner2.getText().toString();
+                String categoryName = mEditSpinnerCategories.getText().toString();
                 int categoryId = -1;
                 for (int i=0; i<categories.size(); i++){
                     if (categoryName.equals(categories.get(i).getName())){

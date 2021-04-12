@@ -103,14 +103,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void testRecherche() {
+        Log.i("LOG", "Recherche TODO DANS LISTE : " + todos.get(0).toString());
         todo = pdb.todoDao().findById(todos.get(0).getId());
-        Log.i("LOG", "Recherche TODO : " + todo.toString());
-
-        //timer = pdb.timerDao().findById(todo.getTimerId());
-        //Log.i("LOG", "Timer of TODO : " + timer.toString());
+        Log.i("LOG", "Recherche LE MEME TODO DANS DB : " + todo.toString());
 
         category = pdb.categoryDao().findById(todo.getCategoryId());
         Log.i("LOG", "Category of TODO : " + category.toString());
+
+        Log.i("LOG", "Un timer dans la liste: " + timers.get(0).toString());
+        timer = pdb.timerDao().findById(timers.get(0).getId());
+        Log.i("LOG", "Le meme timer dans la bd: " + timer.toString());
     }
 
     private void testUpdate() {
