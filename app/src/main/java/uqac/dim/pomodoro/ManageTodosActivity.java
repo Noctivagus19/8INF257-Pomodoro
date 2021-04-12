@@ -138,14 +138,6 @@ public class ManageTodosActivity extends ListActivity{
             }
         });
 
-
-        mEditSpinnerCategories.setOnShowListener(new EditSpinner.OnShowListener() {
-            @Override
-            public void onShow() {
-                //hideSoftInputPanel();
-            }
-        });
-
         // select the first item initially
         mEditSpinnerCategories.selectItem(selected);
     }
