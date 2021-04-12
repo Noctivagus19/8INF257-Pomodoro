@@ -1,6 +1,7 @@
 package uqac.dim.pomodoro.entities;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -24,6 +25,9 @@ public interface CategoryDao {
 
     @Query("delete from category WHERE id=:id")
     void deleteById(int id);
+
+    @Delete()
+    void deleteById(Category category);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateCategory(Category category);
