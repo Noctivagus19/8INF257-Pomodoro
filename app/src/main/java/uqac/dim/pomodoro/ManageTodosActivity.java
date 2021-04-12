@@ -201,8 +201,6 @@ public class ManageTodosActivity extends ListActivity{
 
     @Override
     protected void onPause() {
-
-        //datasource.close();
         super.onPause();
     }
 
