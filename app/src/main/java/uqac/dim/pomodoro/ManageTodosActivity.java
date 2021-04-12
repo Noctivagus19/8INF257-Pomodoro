@@ -118,7 +118,6 @@ public class ManageTodosActivity extends ListActivity{
         mEditSpinnerCategories.setItemConverter(new EditSpinner.ItemConverter() {
             @Override
             public String convertItemToString(Object selectedItem) {
-                //if (selectedItem.toString().equals(categories.get(categories.size()-1))) {
                 if (selectedItem.toString().equals(stringArrayCategories[stringArrayCategories.length - 1])) {
                     return selectedItem.toString();
                 } else {
