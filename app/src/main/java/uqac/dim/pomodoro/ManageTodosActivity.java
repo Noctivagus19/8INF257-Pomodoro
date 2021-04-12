@@ -186,7 +186,7 @@ public class ManageTodosActivity extends ListActivity{
             case R.id.delete:	if (getListAdapter().getCount() > 0) {
                 todo = (Todo) getListAdapter().getItem(0);
                 adapter.remove(todo);
-                pdb.todoDao().deleteById(todo.getId());
+                pdb.todoDao().deleteTodo(todo);
                 todos = pdb.todoDao().getAllTodos();
             }
                 break;

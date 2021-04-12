@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void testDelete() {
-        pdb.todoDao().deleteById(todos.get(0).getId());
+        pdb.todoDao().deleteTodo(todos.get(0));
         for (Todo todo: pdb.todoDao().getAllTodos()) {
             Log.i("LOG", "Apres delete TODO: " + todo.toString());
         }

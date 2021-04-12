@@ -15,7 +15,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/custom_editor_bkg"
-        android:hint="enter custom text here"
+        android:hint="Ajoutez une nouvelle categorie ici"
         android:textColorHint="#aa828282"
         android:textSize="18dp"
         android:padding="8dp"
