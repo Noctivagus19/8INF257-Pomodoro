@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,6 +34,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.reginald.editspinner.EditSpinner;
 
@@ -115,7 +118,6 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
             }
         });
 
-
         // it converts the item in the list to a string shown in EditText.
         mEditSpinnerCategories.setItemConverter(new EditSpinner.ItemConverter() {
             @Override
@@ -139,9 +141,6 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                 }
             }
         });
-
-        // select the first item initially
-        //mEditSpinnerCategories.selectItem(selected);
     }
 
     private void hideSoftInputPanel() {
@@ -191,6 +190,22 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                 todos = pdb.todoDao().getAllTodos();
             }
                 break;
+
+            case R.id.options_todo:
+                Log.i("LOG","Options Todo clicked");
+                PopupMenu popup = new PopupMenu(ManageTodosActivity.this, view);
+                popup.getMenuInflater().inflate(R.menu.options_todo_menu, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Toast.makeText(
+                                ManageTodosActivity.this,
+                                "You Clicked : " + item.getTitle(),
+                                Toast.LENGTH_SHORT
+                        ).show();
+                        return true;
+                    }
+                });
+                popup.show(); //showing popup menu
         }
 
     }
