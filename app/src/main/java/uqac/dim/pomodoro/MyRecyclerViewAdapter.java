@@ -22,12 +22,31 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     private static PomodoroDB pdb;
+    private static int editRowPosition;
+    private static final int editRow = 0;
+    private static final int stdRow = 1;
+
+
+    public static void setEditRow(int position){
+        editRowPosition = position;
+    }
 
     // data is passed into the constructor
     MyRecyclerViewAdapter(Context context, List<Todo> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         pdb = PomodoroDB.getDatabase(context.getApplicationContext());
+        editRowPosition = -1;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == editRowPosition){
+            return editRow;
+        }
+        else{
+            return stdRow;
+        }
     }
 
     // inflates the row layout from xml when needed
@@ -58,6 +77,11 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     public void remove(Todo todo) {
         mData.remove(todo);
+        notifyDataSetChanged();
+    }
+
+    public void updateData(final List<Todo> todos){
+        mData= todos;
         notifyDataSetChanged();
     }
 

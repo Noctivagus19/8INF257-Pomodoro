@@ -4,6 +4,6 @@
         android:id="@+id/one"
         android:title="Supprimer"
         android:text="Supprimer"/>
-    
+
 </menu>
 

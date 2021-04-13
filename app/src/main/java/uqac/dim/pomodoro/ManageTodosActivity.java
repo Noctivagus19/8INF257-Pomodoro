@@ -54,6 +54,7 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
     @Override
     public void onItemClick(View view, int position) {
         if(view instanceof Button){
+            Log.i("LOG","Options Todo clicked position "+ position);
             openOptionsTodo(view, todos.get(position));
         }else {
             Log.i("LOG", "RecyclerViewClick position: " + rvadapter.getItem(position));
@@ -213,7 +214,7 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
 
 
     public void openOptionsTodo(View view, Todo todo){
-        Log.i("LOG","Options Todo clicked");
+        Log.i("LOG","Open options todo for " + todo.getDescription());
         PopupMenu popup = new PopupMenu(ManageTodosActivity.this, view);
         popup.getMenuInflater().inflate(R.menu.options_todo_menu, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -226,9 +227,10 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
 
                 switch((String)item.getTitle()){
                     case "Supprimer":
-                        rvadapter.remove(todo);
+                        Log.i("LOG","clicked remove todo for " + todo.getDescription());
                         pdb.todoDao().deleteTodo(todo);
                         todos = pdb.todoDao().getAllTodos();
+                        rvadapter.updateData(todos);
                         break;
                 }
                 return true;
