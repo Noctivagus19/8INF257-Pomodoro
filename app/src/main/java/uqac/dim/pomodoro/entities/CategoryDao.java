@@ -14,6 +14,9 @@ public interface CategoryDao {
     @Query("SELECT * FROM category")
     List<Category> getAllCategories();
 
+    @Query("SELECT * FROM category WHERE status = 'Active'")
+    List<Category> getActiveCategories();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addCategory(Category category);
 
@@ -27,7 +30,7 @@ public interface CategoryDao {
     void deleteById(int id);
 
     @Delete()
-    void deleteById(Category category);
+    void deleteCategory(Category category);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateCategory(Category category);

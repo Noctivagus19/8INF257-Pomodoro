@@ -1,26 +1,33 @@
 package uqac.dim.pomodoro;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.textclassifier.TextClassification;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import uqac.dim.pomodoro.entities.PomodoroDB;
 import uqac.dim.pomodoro.entities.Todo;
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
     private List<Todo> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    private static PomodoroDB pdb;
 
     // data is passed into the constructor
     MyRecyclerViewAdapter(Context context, List<Todo> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        pdb = PomodoroDB.getDatabase(context.getApplicationContext());
     }
 
     // inflates the row layout from xml when needed
@@ -34,8 +41,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String description = mData.get(position).getDescription();
-        holder.myTextView.setText(description);
+        holder.myTodo.setText(mData.get(position).getDescription());
+        holder.myCategory.setText(pdb.categoryDao().findById(mData.get(position).getCategoryId()).getName());
     }
 
     // total number of rows
@@ -57,12 +64,17 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView myTextView;
+        public Button optionsTodo;
+        TextView myTodo;
+        TextView myCategory;
 
         ViewHolder(View itemView) {
             super(itemView);
-            myTextView = itemView.findViewById(R.id.tvTodo);
+            myTodo = itemView.findViewById(R.id.tvTodo);
+            myCategory = itemView.findViewById(R.id.tvCategory);
             itemView.setOnClickListener(this);
+            optionsTodo = (Button) itemView.findViewById(R.id.options_todo);
+            optionsTodo.setOnClickListener(this);
         }
 
         @Override
@@ -86,3 +98,5 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         void onItemClick(View view, int position);
     }
 }
+
+

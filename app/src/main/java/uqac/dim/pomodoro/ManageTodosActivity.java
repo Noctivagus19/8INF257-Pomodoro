@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+//import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,6 +30,7 @@ import uqac.dim.pomodoro.entities.Todo;
 import android.app.ListActivity;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -47,11 +49,16 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
     List<Category> categories;
     private Todo todo;
     MyRecyclerViewAdapter rvadapter;
+    private int selectedCategoryPosition;
 
     @Override
     public void onItemClick(View view, int position) {
-        Log.i("LOG","RecyclerViewClick position: "+ rvadapter.getItem(position));
-        returnIntent(rvadapter.getItem(position).getId(), rvadapter.getItem(position).getDescription());
+        if(view instanceof Button){
+            openOptionsTodo(view, todos.get(position));
+        }else {
+            Log.i("LOG", "RecyclerViewClick position: " + rvadapter.getItem(position));
+            returnIntent(rvadapter.getItem(position).getId(), rvadapter.getItem(position).getDescription());
+        }
     }
 
     @Override
@@ -78,7 +85,8 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
     }
 
     private void initEditSpinner(int selected) {
-        categories = pdb.categoryDao().getAllCategories();
+        categories = pdb.categoryDao().getActiveCategories();
+        categories.add(0, new Category());
         mEditSpinnerCategories = (EditSpinner) findViewById(R.id.edit_spinner_categories);
         mEditSpinnerCategories.setDropDownDrawable(getResources().getDrawable(R.drawable.spinner), 25, 25);
         mEditSpinnerCategories.setDropDownDrawableSpacing(50);
@@ -110,7 +118,9 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
 
                 String data =  getItem(position).getName();
 
-                icon.setImageResource(R.mipmap.ic_launcher);
+                icon.setImageResource(R.drawable.android_garbage_32);
+                icon.setTag(position);
+
                 textView.setText(data);
                 Log.i("LOG","DATA : "+ data);
 
@@ -135,12 +145,15 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
         mEditSpinnerCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("LOG", "onItemClick() position = " + position);
-                if (position == categories.size() - 1) {
-                    showSoftInputPanel(mEditSpinnerCategories);
-                }
+                    Log.d("LOG", "onItemClick() position = " + position);
+                    if (position == categories.size() - 1) {
+                        showSoftInputPanel(mEditSpinnerCategories);
+                    }
+                    selectedCategoryPosition=position;
             }
         });
+
+
     }
 
     private void hideSoftInputPanel() {
@@ -165,19 +178,23 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                 TextView addTodoDescription = (TextView)findViewById(R.id.addTodoDescription);
                 String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
                 String categoryName = mEditSpinnerCategories.getText().toString();
-                int categoryId = -1;
-                for (int i=0; i<categories.size(); i++){
-                    if (categoryName.equals(categories.get(i).getName())){
-                        categoryId = categories.get(i).getId();
-                    }
+                Category selectedCategory = categories.get(selectedCategoryPosition);
+
+                int categoryId;
+                if (selectedCategoryPosition != 0){
+                    selectedCategory.setName(categoryName);
+                    categoryId = selectedCategory.getId();
+                    pdb.categoryDao().updateCategory(selectedCategory);
                 }
-                if (categoryId == -1){
+                else{
                     pdb.categoryDao().addCategory(new Category( categoryName, "Active"));
                     categories = pdb.categoryDao().getAllCategories();
                     Category insertedCat = categories.get(categories.size()-1);
                     categoryId = insertedCat.getId();
-                    initEditSpinner(categories.size()+1);
+                    initEditSpinner(categories.size()-1);
+                    selectedCategoryPosition = categories.size()-1;
                 }
+
                 pdb.todoDao().addTodo(new Todo( addTodoDescription.getText().toString(), currentDate, categoryId));
                 todos = pdb.todoDao().getAllTodos();
                 rvadapter.add(todos.get(todos.size()-1));
@@ -190,24 +207,34 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                 todos = pdb.todoDao().getAllTodos();
             }
                 break;
-
-            case R.id.options_todo:
-                Log.i("LOG","Options Todo clicked");
-                PopupMenu popup = new PopupMenu(ManageTodosActivity.this, view);
-                popup.getMenuInflater().inflate(R.menu.options_todo_menu, popup.getMenu());
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(
-                                ManageTodosActivity.this,
-                                "You Clicked : " + item.getTitle(),
-                                Toast.LENGTH_SHORT
-                        ).show();
-                        return true;
-                    }
-                });
-                popup.show(); //showing popup menu
         }
 
+    }
+
+
+    public void openOptionsTodo(View view, Todo todo){
+        Log.i("LOG","Options Todo clicked");
+        PopupMenu popup = new PopupMenu(ManageTodosActivity.this, view);
+        popup.getMenuInflater().inflate(R.menu.options_todo_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                Toast.makeText(
+                        ManageTodosActivity.this,
+                        "You Clicked : " + item.getTitle(),
+                        Toast.LENGTH_SHORT
+                ).show();
+
+                switch((String)item.getTitle()){
+                    case "Supprimer":
+                        rvadapter.remove(todo);
+                        pdb.todoDao().deleteTodo(todo);
+                        todos = pdb.todoDao().getAllTodos();
+                        break;
+                }
+                return true;
+            }
+        });
+        popup.show(); //showing popup menu
     }
 
     @Override
@@ -232,5 +259,15 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
         Intent returnIntent = new Intent();
         setResult(MainActivity.RESULT_CANCELED, returnIntent);
         finish();
+    }
+
+    public void clickDeleteCategory(View view) {
+        if ((int)view.getTag() != 0){
+            Category softDeleteCategory = categories.get((int)view.getTag());
+            softDeleteCategory.setStatus("Archived");
+            pdb.categoryDao().updateCategory(softDeleteCategory);
+            categories = pdb.categoryDao().getActiveCategories();
+            initEditSpinner(1);
+        }
     }
 }
