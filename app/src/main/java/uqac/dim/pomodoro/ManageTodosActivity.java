@@ -12,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,7 +35,7 @@ import android.widget.TextView;
 
 import com.reginald.editspinner.EditSpinner;
 
-public class ManageTodosActivity extends ListActivity{
+public class ManageTodosActivity extends AppCompatActivity implements MyRecyclerViewAdapter.ItemClickListener{
     public final static String EXTRA_TODO_ID = "uqac.dim.mafag.TODO_ID";
     public final static String EXTRA_TODO_DESCRIPTION = "uqac.dim.mafag.TODO_DESCRIPTION";
     private PomodoroDB pdb;
@@ -41,6 +43,13 @@ public class ManageTodosActivity extends ListActivity{
     List<Todo> todos;
     List<Category> categories;
     private Todo todo;
+    MyRecyclerViewAdapter rvadapter;
+
+    @Override
+    public void onItemClick(View view, int position) {
+        Log.i("LOG","RecyclerViewClick position: "+ rvadapter.getItem(position));
+        returnIntent(rvadapter.getItem(position).getId(), rvadapter.getItem(position).getDescription());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,20 +63,13 @@ public class ManageTodosActivity extends ListActivity{
     @SuppressLint("UseCompatLoadingForDrawables")
     private void initViews() {
         todos = pdb.todoDao().getAllTodos();
-        ArrayAdapter<Todo> adapter = new ArrayAdapter<Todo>(
-                this, android.R.layout.simple_list_item_1, todos);
-        setListAdapter(adapter);
 
-        ListView lv = (ListView)findViewById(android.R.id.list);
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-
-                Log.i("LOG", "Listview click position: " + position);
-                todo = (Todo) getListAdapter().getItem(position);
-                returnIntent(todo.getId(), todo.getDescription());
-            }
-        });
+        // set up the RecyclerView
+        RecyclerView recyclerView = findViewById(R.id.rvTodos);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        rvadapter = new MyRecyclerViewAdapter(this, todos);
+        rvadapter.setClickListener(this);
+        recyclerView.setAdapter(rvadapter);
 
         initEditSpinner(1);
     }
@@ -157,7 +159,6 @@ public class ManageTodosActivity extends ListActivity{
     }
 
     public void onClick(View view) {
-        ArrayAdapter<Todo> adapter = (ArrayAdapter<Todo>) getListAdapter();
 
         switch (view.getId()) {
 
@@ -180,18 +181,18 @@ public class ManageTodosActivity extends ListActivity{
                 }
                 pdb.todoDao().addTodo(new Todo( addTodoDescription.getText().toString(), currentDate, categoryId));
                 todos = pdb.todoDao().getAllTodos();
-                adapter.add(todos.get(todos.size()-1));
+                rvadapter.add(todos.get(todos.size()-1));
                 break;
 
-            case R.id.delete:	if (getListAdapter().getCount() > 0) {
-                todo = (Todo) getListAdapter().getItem(0);
-                adapter.remove(todo);
+            case R.id.delete:	if (rvadapter.getItemCount() > 0) {
+                todo = (Todo) rvadapter.getItem(0);
+                rvadapter.remove(todo);
                 pdb.todoDao().deleteTodo(todo);
                 todos = pdb.todoDao().getAllTodos();
             }
                 break;
         }
-        adapter.notifyDataSetChanged();            // IMPORTANT : Mettre a jour l'interface
+
     }
 
     @Override
