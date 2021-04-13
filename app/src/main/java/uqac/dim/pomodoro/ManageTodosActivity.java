@@ -76,21 +76,19 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
 
     private void initEditSpinner(int selected) {
         categories = pdb.categoryDao().getAllCategories();
-        final String[] stringArrayCategories = new String[categories.size()];
-        for (int i=0; i< categories.size(); i++){
-            stringArrayCategories[i] = categories.get(i).getName();
-        }
         mEditSpinnerCategories = (EditSpinner) findViewById(R.id.edit_spinner_categories);
         mEditSpinnerCategories.setDropDownDrawable(getResources().getDrawable(R.drawable.spinner), 25, 25);
         mEditSpinnerCategories.setDropDownDrawableSpacing(50);
+
         mEditSpinnerCategories.setAdapter(new BaseAdapter() {
             public int getCount() {
-                return stringArrayCategories.length;
+                //return stringArrayCategories.length;
+                return categories.size();
             }
 
             @Override
-            public Object getItem(int position) {
-                return stringArrayCategories[position];
+            public Category getItem(int position) {
+                return categories.get(position);
             }
 
             @Override
@@ -107,24 +105,26 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                 ImageView icon = convertView.findViewById(R.id.item_icon);
                 TextView textView = convertView.findViewById(R.id.item_text);
 
-                String data = (String) getItem(position);
+                String data =  getItem(position).getName();
 
                 icon.setImageResource(R.mipmap.ic_launcher);
                 textView.setText(data);
+                Log.i("LOG","DATA : "+ data);
 
                 return convertView;
             }
         });
 
+
         // it converts the item in the list to a string shown in EditText.
         mEditSpinnerCategories.setItemConverter(new EditSpinner.ItemConverter() {
             @Override
             public String convertItemToString(Object selectedItem) {
-                if (selectedItem.toString().equals(stringArrayCategories[stringArrayCategories.length - 1])) {
-                    return selectedItem.toString();
+                Category selectedCat = (Category)selectedItem;
+                if (selectedCat.getId()==(categories.get(categories.size()-1).getId())) {
+                    return selectedCat.getName();
                 } else {
-                    Log.d("LOG", "Selected item to string ");
-                    return selectedItem.toString();
+                    return selectedCat.getName();
                 }
             }
         });
@@ -134,14 +134,14 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d("LOG", "onItemClick() position = " + position);
-                if (position == stringArrayCategories.length - 1) {
+                if (position == categories.size() - 1) {
                     showSoftInputPanel(mEditSpinnerCategories);
                 }
             }
         });
 
         // select the first item initially
-        mEditSpinnerCategories.selectItem(selected);
+        //mEditSpinnerCategories.selectItem(selected);
     }
 
     private void hideSoftInputPanel() {
