@@ -31,6 +31,7 @@ import android.app.ListActivity;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -55,7 +56,7 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
     public void onItemClick(View view, int position) {
         if(view instanceof Button){
             Log.i("LOG","Options Todo clicked position "+ position);
-            openOptionsTodo(view, todos.get(position));
+            openOptionsTodo(view, todos.get(position), position);
         }else {
             Log.i("LOG", "RecyclerViewClick position: " + rvadapter.getItem(position));
             returnIntent(rvadapter.getItem(position).getId(), rvadapter.getItem(position).getDescription());
@@ -208,15 +209,23 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                 todos = pdb.todoDao().getAllTodos();
             }
                 break;
+
         }
 
     }
 
 
-    public void openOptionsTodo(View view, Todo todo){
+    public void openOptionsTodo(View view, Todo todo, int position){
+
         Log.i("LOG","Open options todo for " + todo.getDescription());
         PopupMenu popup = new PopupMenu(ManageTodosActivity.this, view);
-        popup.getMenuInflater().inflate(R.menu.options_todo_menu, popup.getMenu());
+
+        if (position == MyRecyclerViewAdapter.getEditRow()){
+            popup.getMenuInflater().inflate(R.menu.options_todo_menu_save, popup.getMenu());
+        }
+        else{
+            popup.getMenuInflater().inflate(R.menu.options_todo_menu, popup.getMenu());
+        }
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 Toast.makeText(
@@ -232,11 +241,27 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                         todos = pdb.todoDao().getAllTodos();
                         rvadapter.updateData(todos);
                         break;
+
+                    case "Editer":
+                        Log.i("LOG","clicked edit todo for " + todo.getDescription());
+                        MyRecyclerViewAdapter.setEditRow(position);
+                        rvadapter.updateData(todos);
+                        break;
+
+                    case "Sauvegarder":
+                        MyRecyclerViewAdapter.setEditRow(-1);
+                        EditText newTodoDescription = (EditText)findViewById(R.id.edTodo);
+                        todo.setDescription(newTodoDescription.getText().toString());
+                        pdb.todoDao().updateTodo(todo);
+                        todos = pdb.todoDao().getAllTodos();
+                        rvadapter.updateData(todos);
+                        break;
                 }
                 return true;
             }
         });
         popup.show(); //showing popup menu
+
     }
 
     @Override

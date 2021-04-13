@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.textclassifier.TextClassification;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,10 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         editRowPosition = position;
     }
 
+    public static int getEditRow(){
+        return editRowPosition;
+    }
+
     // data is passed into the constructor
     MyRecyclerViewAdapter(Context context, List<Todo> data) {
         this.mInflater = LayoutInflater.from(context);
@@ -52,7 +57,13 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.recyclerview_row, parent, false);
+        View view;
+        if (viewType == stdRow){
+            view = mInflater.inflate(R.layout.recyclerview_row, parent, false);
+        }
+        else{
+            view = mInflater.inflate(R.layout.recyclerview_row_edit, parent, false);
+        }
         return new ViewHolder(view);
     }
 
@@ -60,8 +71,13 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.myTodo.setText(mData.get(position).getDescription());
-        holder.myCategory.setText(pdb.categoryDao().findById(mData.get(position).getCategoryId()).getName());
+        if (holder.getItemViewType() == stdRow){
+            holder.myTodo.setText(mData.get(position).getDescription());
+            holder.myCategory.setText(pdb.categoryDao().findById(mData.get(position).getCategoryId()).getName());
+        }
+        else{
+            holder.myTodoEdit.setText(mData.get(position).getDescription());
+        }
     }
 
     // total number of rows
@@ -91,11 +107,14 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         public Button optionsTodo;
         TextView myTodo;
         TextView myCategory;
+        EditText myTodoEdit;
 
         ViewHolder(View itemView) {
             super(itemView);
             myTodo = itemView.findViewById(R.id.tvTodo);
             myCategory = itemView.findViewById(R.id.tvCategory);
+            myTodoEdit = itemView.findViewById(R.id.edTodo);
+            //myCategoryEdit = itemView.findViewById(R.id.edCategory);
             itemView.setOnClickListener(this);
             optionsTodo = (Button) itemView.findViewById(R.id.options_todo);
             optionsTodo.setOnClickListener(this);
