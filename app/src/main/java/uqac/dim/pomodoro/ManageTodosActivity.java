@@ -85,11 +85,12 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
     @SuppressLint("UseCompatLoadingForDrawables")
     private void initViews() {
         todos = pdb.todoDao().getAllTodos();
+        categories = pdb.categoryDao().getActiveCategories();
 
         // set up the RecyclerView
         RecyclerView recyclerView = findViewById(R.id.rvTodos);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        rvadapter = new MyRecyclerViewAdapter(this, todos);
+        rvadapter = new MyRecyclerViewAdapter(this, todos, categories);
         rvadapter.setClickListener(this);
         recyclerView.setAdapter(rvadapter);
         initEditSpinner(1);

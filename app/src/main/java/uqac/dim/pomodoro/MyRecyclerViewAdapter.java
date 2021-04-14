@@ -9,6 +9,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -25,6 +28,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private static int editRowPosition;
     private static final int editRow = 0;
     private static final int stdRow = 1;
+    private Context globalContext;
+
 
 
     public static void setEditRow(int position){
@@ -36,11 +41,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     }
 
     // data is passed into the constructor
-    MyRecyclerViewAdapter(Context context, List<Todo> data) {
+    MyRecyclerViewAdapter(Context context, List<Todo> data, List<Category> cat) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         pdb = PomodoroDB.getDatabase(context.getApplicationContext());
         editRowPosition = -1;
+        this.categories = cat;
     }
 
     @Override
@@ -59,9 +65,11 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         View view;
         if (viewType == editRow){
             view = mInflater.inflate(R.layout.recyclerview_row_edit, parent, false);
+            globalContext = parent.getContext();
         }
         else{
             view = mInflater.inflate(R.layout.recyclerview_row, parent, false);
+            globalContext = parent.getContext();
         }
         return new ViewHolder(view);
     }
@@ -76,9 +84,31 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         }
         else{
             holder.myTodoEdit.setText(mData.get(position).getDescription());
+            ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(globalContext,android.R.layout.simple_spinner_item,pdb.categoryDao().getActiveCategories()){
+                @Override
+                public Category getItem(int position) {
+                    return categories.get(position);
+                }
+
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent){
+                    TextView view = (TextView) super.getView(position, convertView, parent);
+                    view.setText(getItem(position).getName());
+                    return view;
+                }
+
+                @Override
+                public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                    TextView view = (TextView) super.getView(position, convertView, parent);
+                    view.setText(getItem(position).getName());
+                    return view;
+                }
+            };
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            holder.spinner.setAdapter(adapter);
+
         }
     }
-
 
 
     // total number of rows
@@ -109,12 +139,16 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         TextView myTodo;
         TextView myCategory;
         EditText myTodoEdit;
+        Spinner spinner;
 
         ViewHolder(View itemView) {
             super(itemView);
             myTodo = itemView.findViewById(R.id.tvTodo);
             myCategory = itemView.findViewById(R.id.tvCategory);
             myTodoEdit = itemView.findViewById(R.id.edTodo);
+
+            spinner = itemView.findViewById(R.id.spinnerCategories);
+
             itemView.setOnClickListener(this);
             optionsTodo = (Button) itemView.findViewById(R.id.options_todo);
             optionsTodo.setOnClickListener(this);
@@ -124,6 +158,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         public void onClick(View view) {
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
         }
+
+
     }
 
     // convenience method for getting data at click position
