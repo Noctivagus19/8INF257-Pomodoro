@@ -36,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,7 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
     public final static String EXTRA_TODO_DESCRIPTION = "uqac.dim.mafag.TODO_DESCRIPTION";
     private PomodoroDB pdb;
     EditSpinner mEditSpinnerCategories;
+    Spinner spinner;
     List<Todo> todos;
     List<Category> categories;
     private Todo todo;
@@ -54,12 +56,20 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
 
     @Override
     public void onItemClick(View view, int position) {
-        if(view instanceof Button){
-            Log.i("LOG","Options Todo clicked position "+ position);
-            openOptionsTodo(view, todos.get(position), position);
-        }else {
-            Log.i("LOG", "RecyclerViewClick position: " + rvadapter.getItem(position));
-            returnIntent(rvadapter.getItem(position).getId(), rvadapter.getItem(position).getDescription());
+        if (MyRecyclerViewAdapter.getEditRow() != -1){
+            if((view instanceof Button) && (position == MyRecyclerViewAdapter.getEditRow())) {
+                Log.i("LOG", "Options Todo clicked position " + position);
+                openOptionsTodo(view, todos.get(position), position);
+            }
+        }
+        else {
+            if(view instanceof Button){
+                Log.i("LOG","Options Todo clicked position "+ position);
+                openOptionsTodo(view, todos.get(position), position);
+            }else {
+                Log.i("LOG", "RecyclerViewClick position: " + rvadapter.getItem(position));
+                returnIntent(rvadapter.getItem(position).getId(), rvadapter.getItem(position).getDescription());
+            }
         }
     }
 
@@ -82,20 +92,20 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
         rvadapter = new MyRecyclerViewAdapter(this, todos);
         rvadapter.setClickListener(this);
         recyclerView.setAdapter(rvadapter);
-
         initEditSpinner(1);
+
     }
+
 
     private void initEditSpinner(int selected) {
         categories = pdb.categoryDao().getActiveCategories();
-        categories.add(0, new Category());
+        categories.add(0, new Category("","Active"));
         mEditSpinnerCategories = (EditSpinner) findViewById(R.id.edit_spinner_categories);
         mEditSpinnerCategories.setDropDownDrawable(getResources().getDrawable(R.drawable.spinner), 25, 25);
         mEditSpinnerCategories.setDropDownDrawableSpacing(50);
 
         mEditSpinnerCategories.setAdapter(new BaseAdapter() {
             public int getCount() {
-                //return stringArrayCategories.length;
                 return categories.size();
             }
 
@@ -119,8 +129,12 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                 TextView textView = convertView.findViewById(R.id.item_text);
 
                 String data =  getItem(position).getName();
-
-                icon.setImageResource(R.drawable.android_garbage_32);
+                if (position == 0){
+                    icon.setImageResource(R.drawable.plus_icon_32);
+                }
+                else{
+                    icon.setImageResource(R.drawable.android_garbage_32);
+                }
                 icon.setTag(position);
 
                 textView.setText(data);
@@ -202,13 +216,6 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                 rvadapter.add(todos.get(todos.size()-1));
                 break;
 
-            case R.id.delete:	if (rvadapter.getItemCount() > 0) {
-                todo = (Todo) rvadapter.getItem(0);
-                rvadapter.remove(todo);
-                pdb.todoDao().deleteTodo(todo);
-                todos = pdb.todoDao().getAllTodos();
-            }
-                break;
 
         }
 
@@ -253,6 +260,12 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                         EditText newTodoDescription = (EditText)findViewById(R.id.edTodo);
                         todo.setDescription(newTodoDescription.getText().toString());
                         pdb.todoDao().updateTodo(todo);
+                        todos = pdb.todoDao().getAllTodos();
+                        rvadapter.updateData(todos);
+                        break;
+
+                    case "Annuller":
+                        MyRecyclerViewAdapter.setEditRow(-1);
                         todos = pdb.todoDao().getAllTodos();
                         rvadapter.updateData(todos);
                         break;

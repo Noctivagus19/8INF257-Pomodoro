@@ -1,25 +1,24 @@
 package uqac.dim.pomodoro;
-
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.textclassifier.TextClassification;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import uqac.dim.pomodoro.entities.Category;
 import uqac.dim.pomodoro.entities.PomodoroDB;
 import uqac.dim.pomodoro.entities.Todo;
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
     private List<Todo> mData;
+    private List<Category> categories;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     private static PomodoroDB pdb;
@@ -58,11 +57,11 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        if (viewType == stdRow){
-            view = mInflater.inflate(R.layout.recyclerview_row, parent, false);
+        if (viewType == editRow){
+            view = mInflater.inflate(R.layout.recyclerview_row_edit, parent, false);
         }
         else{
-            view = mInflater.inflate(R.layout.recyclerview_row_edit, parent, false);
+            view = mInflater.inflate(R.layout.recyclerview_row, parent, false);
         }
         return new ViewHolder(view);
     }
@@ -79,6 +78,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             holder.myTodoEdit.setText(mData.get(position).getDescription());
         }
     }
+
+
 
     // total number of rows
     @Override
@@ -114,7 +115,6 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             myTodo = itemView.findViewById(R.id.tvTodo);
             myCategory = itemView.findViewById(R.id.tvCategory);
             myTodoEdit = itemView.findViewById(R.id.edTodo);
-            //myCategoryEdit = itemView.findViewById(R.id.edCategory);
             itemView.setOnClickListener(this);
             optionsTodo = (Button) itemView.findViewById(R.id.options_todo);
             optionsTodo.setOnClickListener(this);
@@ -140,6 +140,9 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }
+
+
+
 }
 
 

@@ -19,11 +19,6 @@ public class Category {
         this.status = status;
     }
 
-    public Category() {
-        this.name = "";
-        this.status = "Active";
-    }
-
     @Override
     public String toString() {
         return "Category{" +
