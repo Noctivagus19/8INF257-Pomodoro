@@ -259,13 +259,16 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                     case "Sauvegarder":
                         MyRecyclerViewAdapter.setEditRow(-1);
                         EditText newTodoDescription = (EditText)findViewById(R.id.edTodo);
+                        Spinner spinnerCategories = (Spinner)findViewById(R.id.spinnerCategories);
+                        Category newTodoCategory = (Category)spinnerCategories.getSelectedItem();
                         todo.setDescription(newTodoDescription.getText().toString());
+                        todo.setCategoryId(newTodoCategory.getId());
                         pdb.todoDao().updateTodo(todo);
                         todos = pdb.todoDao().getAllTodos();
                         rvadapter.updateData(todos);
                         break;
 
-                    case "Annuller":
+                    case "Annuler":
                         MyRecyclerViewAdapter.setEditRow(-1);
                         todos = pdb.todoDao().getAllTodos();
                         rvadapter.updateData(todos);
@@ -275,7 +278,6 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
             }
         });
         popup.show(); //showing popup menu
-
     }
 
     @Override

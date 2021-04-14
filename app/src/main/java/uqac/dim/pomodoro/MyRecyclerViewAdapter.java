@@ -28,6 +28,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private static int editRowPosition;
     private static final int editRow = 0;
     private static final int stdRow = 1;
+    private static final int dspRow = 2;
     private Context globalContext;
 
 
@@ -51,8 +52,13 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     @Override
     public int getItemViewType(int position) {
-        if (position == editRowPosition){
-            return editRow;
+        if(editRowPosition != -1){
+            if (position == editRowPosition){
+                return editRow;
+            }
+            else{
+                return dspRow;
+            }
         }
         else{
             return stdRow;
@@ -67,8 +73,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             view = mInflater.inflate(R.layout.recyclerview_row_edit, parent, false);
             globalContext = parent.getContext();
         }
-        else{
+        else if (viewType == stdRow){
             view = mInflater.inflate(R.layout.recyclerview_row, parent, false);
+            globalContext = parent.getContext();
+        }
+        else{
+            view = mInflater.inflate(R.layout.recyclerview_row_display, parent, false);
             globalContext = parent.getContext();
         }
         return new ViewHolder(view);
@@ -78,7 +88,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (holder.getItemViewType() == stdRow){
+        if (holder.getItemViewType() == stdRow || holder.getItemViewType() == dspRow){
             holder.myTodo.setText(mData.get(position).getDescription());
             holder.myCategory.setText(pdb.categoryDao().findById(mData.get(position).getCategoryId()).getName());
         }
@@ -106,10 +116,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             };
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             holder.spinner.setAdapter(adapter);
-
         }
     }
-
 
     // total number of rows
     @Override
