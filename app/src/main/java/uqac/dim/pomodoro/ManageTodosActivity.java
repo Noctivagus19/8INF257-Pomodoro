@@ -54,6 +54,7 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
     MyRecyclerViewAdapter rvadapter;
     private int selectedCategoryPosition;
 
+
     @Override
     public void onItemClick(View view, int position) {
         if (MyRecyclerViewAdapter.getEditRow() != -1){
