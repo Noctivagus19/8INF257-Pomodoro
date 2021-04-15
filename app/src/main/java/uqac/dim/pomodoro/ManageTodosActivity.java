@@ -49,10 +49,8 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
     public final static String EXTRA_TODO_DESCRIPTION = "uqac.dim.mafag.TODO_DESCRIPTION";
     private PomodoroDB pdb;
     EditSpinner mEditSpinnerCategories;
-    Spinner spinner;
     List<Todo> todos;
     List<Category> categories;
-    private Todo todo;
     MyRecyclerViewAdapter rvadapter;
     private int selectedCategoryPosition;
 
@@ -230,7 +228,7 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                             selectedCategoryPosition = categories.size()-1;
                         }
                     }
-                    
+
                     pdb.todoDao().addTodo(new Todo( addTodoDescription.getText().toString(), currentDate, categoryId));
                     todos = pdb.todoDao().getAllTodos();
                     rvadapter.updateData(todos);
