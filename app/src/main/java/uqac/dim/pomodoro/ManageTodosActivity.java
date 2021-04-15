@@ -81,22 +81,21 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
         setContentView(R.layout.activity_managetodos);
         Log.i("LOG", "MANAGE TODOS ACTIVITY ONCREATE");
         pdb = PomodoroDB.getDatabase(getApplicationContext());
-        initViews();
+        initRecyclerView();
+        initEditSpinner(0);
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private void initViews() {
+    private void initRecyclerView() {
+        // set up the RecyclerView
         todos = pdb.todoDao().getAllTodos();
         categories = pdb.categoryDao().getActiveCategories();
-
-        // set up the RecyclerView
         RecyclerView recyclerView = findViewById(R.id.rvTodos);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        rvadapter = new MyRecyclerViewAdapter(this, todos, categories);
+        rvadapter = new MyRecyclerViewAdapter(this, todos);
         rvadapter.setClickListener(this);
         recyclerView.setAdapter(rvadapter);
-        initEditSpinner(1);
-
+        initEditSpinner(0);
     }
 
 
@@ -146,6 +145,11 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                 return convertView;
             }
         });
+
+        if (selected != 0){
+            mEditSpinnerCategories.selectItem(selected);
+        }
+
 
         // it converts the item in the list to a string shown in EditText.
         mEditSpinnerCategories.setItemConverter(new EditSpinner.ItemConverter() {
@@ -214,13 +218,16 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                         categories = pdb.categoryDao().getAllCategories();
                         Category insertedCat = categories.get(categories.size()-1);
                         categoryId = insertedCat.getId();
-                        initEditSpinner(categories.size()-1);
+                        initEditSpinner(categories.size());
                         selectedCategoryPosition = categories.size()-1;
                     }
 
                     pdb.todoDao().addTodo(new Todo( addTodoDescription.getText().toString(), currentDate, categoryId));
                     todos = pdb.todoDao().getAllTodos();
-                    rvadapter.add(todos.get(todos.size()-1));
+                    rvadapter.updateData(todos);
+                    //rvadapter.add(todos.get(todos.size()-1));
+                    initRecyclerView();
+
                 }
                 break;
         }
@@ -241,7 +248,6 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
         }
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(ManageTodosActivity.this, "You Clicked : " + item.getTitle(), Toast.LENGTH_SHORT).show();
 
                 switch((String)item.getTitle()){
                     case "Supprimer":

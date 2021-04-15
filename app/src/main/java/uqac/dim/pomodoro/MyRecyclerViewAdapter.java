@@ -9,9 +9,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -29,8 +26,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private static final int editRow = 0;
     private static final int stdRow = 1;
     private static final int dspRow = 2;
-    private Context globalContext;
-
+    private Context rowContext;
 
 
     public static void setEditRow(int position){
@@ -42,12 +38,13 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     }
 
     // data is passed into the constructor
-    MyRecyclerViewAdapter(Context context, List<Todo> data, List<Category> cat) {
+    MyRecyclerViewAdapter(Context context, List<Todo> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         pdb = PomodoroDB.getDatabase(context.getApplicationContext());
         editRowPosition = -1;
-        this.categories = cat;
+        this.categories = pdb.categoryDao().getActiveCategories();
+        rowContext = context;
     }
 
     @Override
@@ -71,15 +68,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         View view;
         if (viewType == editRow){
             view = mInflater.inflate(R.layout.recyclerview_row_edit, parent, false);
-            globalContext = parent.getContext();
         }
         else if (viewType == stdRow){
             view = mInflater.inflate(R.layout.recyclerview_row, parent, false);
-            globalContext = parent.getContext();
         }
         else{
             view = mInflater.inflate(R.layout.recyclerview_row_display, parent, false);
-            globalContext = parent.getContext();
         }
         return new ViewHolder(view);
     }
@@ -94,7 +88,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         }
         else{
             holder.myTodoEdit.setText(mData.get(position).getDescription());
-            ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(globalContext,android.R.layout.simple_spinner_item,pdb.categoryDao().getActiveCategories()){
+            ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(rowContext,android.R.layout.simple_spinner_item, pdb.categoryDao().getActiveCategories()){
                 @Override
                 public Category getItem(int position) {
                     return categories.get(position);
@@ -116,7 +110,9 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             };
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             holder.spinner.setAdapter(adapter);
+
         }
+
     }
 
     // total number of rows
@@ -154,9 +150,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             myTodo = itemView.findViewById(R.id.tvTodo);
             myCategory = itemView.findViewById(R.id.tvCategory);
             myTodoEdit = itemView.findViewById(R.id.edTodo);
-
             spinner = itemView.findViewById(R.id.spinnerCategories);
-
             itemView.setOnClickListener(this);
             optionsTodo = (Button) itemView.findViewById(R.id.options_todo);
             optionsTodo.setOnClickListener(this);
@@ -166,7 +160,6 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         public void onClick(View view) {
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
         }
-
 
     }
 
@@ -184,8 +177,6 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }
-
-
 
 }
 

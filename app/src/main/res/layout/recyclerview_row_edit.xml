@@ -21,8 +21,8 @@
 
         <Spinner
             android:id="@+id/spinnerCategories"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+            android:layout_width="200dp"
+            android:layout_height="30dp" />
 
     </LinearLayout>
 
