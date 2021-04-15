@@ -207,25 +207,33 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                     String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
                     Category selectedCategory = categories.get(selectedCategoryPosition);
 
-                    int categoryId;
-                    if (selectedCategoryPosition != 0){
-                        selectedCategory.setName(categoryName);
-                        categoryId = selectedCategory.getId();
-                        pdb.categoryDao().updateCategory(selectedCategory);
-                    }
-                    else{
-                        pdb.categoryDao().addCategory(new Category( categoryName, "Active"));
-                        categories = pdb.categoryDao().getAllCategories();
-                        Category insertedCat = categories.get(categories.size()-1);
-                        categoryId = insertedCat.getId();
-                        initEditSpinner(categories.size());
-                        selectedCategoryPosition = categories.size()-1;
+                    int categoryId = -1;
+                    for (int i=1; i<categories.size(); i++) {
+                        if (categoryName.equals(categories.get(i).getName())){
+                            categoryId = categories.get(i).getId();
+                            selectedCategoryPosition=i;
+                        }
                     }
 
+                    if(categoryId == -1){
+                        if (selectedCategoryPosition != 0){
+                            selectedCategory.setName(categoryName);
+                            categoryId = selectedCategory.getId();
+                            pdb.categoryDao().updateCategory(selectedCategory);
+                        }
+                        else{
+                            pdb.categoryDao().addCategory(new Category( categoryName, "Active"));
+                            categories = pdb.categoryDao().getAllCategories();
+                            Category insertedCat = categories.get(categories.size()-1);
+                            categoryId = insertedCat.getId();
+                            initEditSpinner(categories.size());
+                            selectedCategoryPosition = categories.size()-1;
+                        }
+                    }
+                    
                     pdb.todoDao().addTodo(new Todo( addTodoDescription.getText().toString(), currentDate, categoryId));
                     todos = pdb.todoDao().getAllTodos();
                     rvadapter.updateData(todos);
-                    //rvadapter.add(todos.get(todos.size()-1));
                     initRecyclerView();
 
                 }
