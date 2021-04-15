@@ -7,43 +7,35 @@
     android:padding="10dp"
     android:background="#dbdbdb">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="10dp">
-
-        <TextView
-            android:id="@+id/tvTodo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textSize="20sp"/>
-
-        <TextView
-            android:id="@+id/tvCategory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textSize="15sp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
+    <TableLayout
+        android:id="@+id/tableLayout_stats"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="right"
-        android:padding="10dp">
+        android:stretchColumns="1">
 
-        <Button
-            android:id="@+id/options_todo"
-            android:tag="0"
-            android:enabled="false"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:onClick="onClick"
-            android:text="+" />
-    </LinearLayout>
+        <TableRow>
+            <TextView
+                android:layout_span="2"
+                android:id="@+id/tvTodo"
+                android:layout_gravity="center_vertical"
+                android:textSize="20sp"/>
+
+            <Button
+                android:id="@+id/options_todo"
+                android:tag="0"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:onClick="onClick"
+                android:text="+"
+                android:enabled="false"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:id="@+id/tvCategory"
+                android:layout_gravity="center_vertical"
+                android:textSize="15sp"/>
+        </TableRow>
+    </TableLayout>
 
 </LinearLayout>
