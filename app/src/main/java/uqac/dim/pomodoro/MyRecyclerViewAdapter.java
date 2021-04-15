@@ -111,6 +111,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             holder.spinner.setAdapter(adapter);
             holder.spinner.getLayoutParams().width = android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+            holder.spinner.getLayoutParams().height = android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
             holder.spinner.requestLayout();
 
             for (int i =0; i< categories.size(); i++){
@@ -118,7 +119,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                     holder.spinner.setSelection(i);
                 }
             }
-           
+
 
 
 
