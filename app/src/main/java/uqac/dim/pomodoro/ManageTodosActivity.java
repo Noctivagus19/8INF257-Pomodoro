@@ -86,7 +86,7 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
     @SuppressLint("UseCompatLoadingForDrawables")
     private void initRecyclerView() {
         // set up the RecyclerView
-        todos = pdb.todoDao().getAllTodos();
+        todos = pdb.todoDao().getActiveTodos();
         categories = pdb.categoryDao().getActiveCategories();
         RecyclerView recyclerView = findViewById(R.id.rvTodos);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -195,13 +195,20 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
 
             case R.id.add:
                 String categoryName = mEditSpinnerCategories.getText().toString();
-                if (categoryName.equals("")){
+                TextView todoDescription = (TextView)findViewById(R.id.addTodoDescription);
+                String addTodoDescription = todoDescription.getText().toString();
+
+                if (addTodoDescription.equals("")){
+                    Toast toast= Toast.makeText(ManageTodosActivity.this, "Vous entrer une description de todo" , Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.TOP, 0, 140);
+                    toast.show();
+                }
+                else if (categoryName.equals("")){
                     Toast toast= Toast.makeText(ManageTodosActivity.this, "Vous devez sélectionner une catégorie" , Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.TOP, 0, 140);
                     toast.show();
                 }
                 else{
-                    TextView addTodoDescription = (TextView)findViewById(R.id.addTodoDescription);
                     String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
                     Category selectedCategory = categories.get(selectedCategoryPosition);
 
@@ -229,8 +236,8 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                         }
                     }
 
-                    pdb.todoDao().addTodo(new Todo( addTodoDescription.getText().toString(), currentDate, categoryId));
-                    todos = pdb.todoDao().getAllTodos();
+                    pdb.todoDao().addTodo(new Todo( addTodoDescription, currentDate, categoryId));
+                    todos = pdb.todoDao().getActiveTodos();
                     rvadapter.updateData(todos);
                     initRecyclerView();
 
@@ -259,7 +266,7 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                     case "Supprimer":
                         Log.i("LOG","clicked remove todo for " + todo.getDescription());
                         pdb.todoDao().deleteTodo(todo);
-                        todos = pdb.todoDao().getAllTodos();
+                        todos = pdb.todoDao().getActiveTodos();
                         rvadapter.updateData(todos);
                         break;
 
@@ -277,13 +284,13 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                         todo.setDescription(newTodoDescription.getText().toString());
                         todo.setCategoryId(newTodoCategory.getId());
                         pdb.todoDao().updateTodo(todo);
-                        todos = pdb.todoDao().getAllTodos();
+                        todos = pdb.todoDao().getActiveTodos();
                         rvadapter.updateData(todos);
                         break;
 
                     case "Annuler":
                         MyRecyclerViewAdapter.setEditRow(-1);
-                        todos = pdb.todoDao().getAllTodos();
+                        todos = pdb.todoDao().getActiveTodos();
                         rvadapter.updateData(todos);
                         break;
                 }

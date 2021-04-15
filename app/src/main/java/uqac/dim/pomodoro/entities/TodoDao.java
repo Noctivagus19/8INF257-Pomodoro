@@ -13,6 +13,9 @@ public interface TodoDao {
     @Query("SELECT * FROM todo")
     List<Todo> getAllTodos();
 
+    @Query("SELECT * FROM todo WHERE completionTime=-1")
+    List<Todo> getActiveTodos();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addTodo(Todo todo);
 
@@ -28,15 +31,6 @@ public interface TodoDao {
     @Delete()
     void deleteTodo(Todo todo);
 
-    @Query("SELECT " +
-            "Todo.id, " +
-            "Todo.description, " +
-            "Todo.date, " +
-            "Todo.fk_categoryId, " +
-            "Todo.completionTime " +
-            "FROM todo " +
-            "WHERE Todo.id=:id"
-    )
+    @Query("SELECT * FROM todo WHERE Todo.id=:id")
     Todo findById(int id);
-
 }
