@@ -200,7 +200,7 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                 String addTodoDescription = todoDescription.getText().toString();
 
                 if (addTodoDescription.equals("")){
-                    Toast toast= Toast.makeText(ManageTodosActivity.this, "Vous entrer une description de todo" , Toast.LENGTH_LONG);
+                    Toast toast= Toast.makeText(ManageTodosActivity.this, "Vous devez entrer une description de todo" , Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.TOP, 0, 140);
                     toast.show();
                 }
