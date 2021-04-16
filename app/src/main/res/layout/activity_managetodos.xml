@@ -6,29 +6,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <EditText
+        android:id="@+id/addTodoDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:hint="Ajouter un Todo"
+        android:ems="10">
+        <requestFocus />
+    </EditText>
 
     <com.reginald.editspinner.EditSpinner
         android:id="@+id/edit_spinner_categories"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginBottom="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/custom_editor_bkg"
-        android:hint="Ajoutez une nouvelle categorie ici"
+        android:hint="Sélection/ajout/modification de categorie"
         android:textColorHint="#aa828282"
         android:textSize="18dp"
         android:padding="8dp"
         />
-
-
-    <EditText
-        android:id="@+id/addTodoDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10">
-        <requestFocus />
-    </EditText>
 
     <LinearLayout
         android:id="@+id/group"
@@ -39,23 +41,14 @@
             android:id="@+id/add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add New"
-            android:onClick="onClick"/>
-
-        <Button
-            android:id="@+id/delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Delete First"
+            android:text="Ajouter Todo"
             android:onClick="onClick"/>
 
     </LinearLayout>
 
-    <ListView
-        android:id="@android:id/list"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTodos"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="8dp" />
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

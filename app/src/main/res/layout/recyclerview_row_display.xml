@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="#dbdbdb">
+
+    <TableLayout
+        android:id="@+id/tableLayout_stats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1">
+
+        <TableRow>
+            <TextView
+                android:layout_span="2"
+                android:id="@+id/tvTodo"
+                android:layout_gravity="center_vertical"
+                android:textSize="20sp"/>
+
+            <Button
+                android:id="@+id/options_todo"
+                android:tag="0"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:onClick="onClick"
+                android:text="+"
+                android:enabled="false"/>
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tvCategory"
+            android:layout_gravity="center_vertical"
+            android:textSize="15sp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" />
+    </LinearLayout>
+
+
+</LinearLayout>

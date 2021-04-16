@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         pdb.todoDao().addTodo(new Todo( "Ceci est un Todo", currentDate, categories.get(0).getId()));
+        pdb.todoDao().addTodo(new Todo( "Bounty hunt d'un rogue squirrel de Jonquière", currentDate, categories.get(0).getId()));
         pdb.todoDao().addTodo(new Todo( "Ceci est un autre Todo", currentDate, categories.get(0).getId()));
         for (Todo todo: pdb.todoDao().getAllTodos()) {
             Log.i("LOG", "INSERTION TODO: " + todo.toString());
