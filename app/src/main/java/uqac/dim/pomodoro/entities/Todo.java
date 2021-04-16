@@ -33,8 +33,7 @@ public class Todo {
         this.completionTime = -1;
     }
 
-
-
+    
     public String toString() {
         return "Todo{" +
                 "id=" + id +
