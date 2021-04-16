@@ -119,12 +119,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                     holder.spinner.setSelection(i);
                 }
             }
-
-
-
-
         }
-
     }
 
     // total number of rows
