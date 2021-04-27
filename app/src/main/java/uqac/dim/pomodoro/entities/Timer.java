@@ -3,8 +3,15 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Entity
 public class Timer {
+    private static final String ACTIVE = "ACTIVE";
+    private static final String SELECTABLE = "SELECTABLE";
+    private static final String ARCHIVED = "ARCHIVED";
+
     @PrimaryKey(autoGenerate = true)
     public int id;
 
@@ -20,22 +27,27 @@ public class Timer {
     @ColumnInfo(name = "pauseIntervals")
     public int pauseIntervals;
 
+    @ColumnInfo(name = "status")
+    public String status;
+
     public Timer(int workMs, int pauseMs, int longPauseMs, int pauseIntervals) {
         this.workMs = workMs;
         this.pauseMs = pauseMs;
         this.longPauseMs = longPauseMs;
         this.pauseIntervals = pauseIntervals;
+        this.status = SELECTABLE;
     }
 
     @Override
     public String toString() {
         return "Timer{" +
-                "id=" + id +
-                ", workMs='" + workMs + '\'' +
-                ", pauseMs='" + pauseMs + '\'' +
-                ", longPauseMs='" + longPauseMs + '\'' +
-                ", pauseIntervals='" + pauseIntervals + '\'' +
-                '}';
+                "id=" + this.getId() +
+                ", workMs='" + this.getWorkMs() + "'" +
+                ", pauseMs='" + this.getPauseMs() + "'" +
+                ", longPauseMs='" + this.getLongPauseMs() + "'" +
+                ", pauseIntervals='" + this.getPauseIntervals() + "'" +
+                ", status='" + this.getStatus() + "'" +
+                "}";
     }
 
     public int getId(){
@@ -72,5 +84,21 @@ public class Timer {
 
     public int getPauseIntervals(){
         return this.pauseIntervals;
+    }
+
+    public String getStatus() {
+        return this.status;
+    }
+
+    public void setActive() {
+        this.status = ACTIVE;
+    }
+
+    public void setSelectable() {
+        this.status = SELECTABLE;
+    }
+
+    public void setArchived() {
+        this.status = ARCHIVED;
     }
 }

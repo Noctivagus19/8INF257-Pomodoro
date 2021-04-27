@@ -61,17 +61,31 @@ public class MainActivity extends AppCompatActivity {
         ((Button)findViewById(R.id.rightButton))
                 .setOnClickListener((View.OnClickListener) this::onRightClick);
 
-        initializeTimer();
 
         pdb = PomodoroDB.getDatabase(getApplicationContext());
         pdb.todoDao().deleteTodos();
         pdb.timerDao().deleteTimers();
         pdb.categoryDao().deleteCategories();
-        testInsertion();
-        testRecherche();
-        testUpdate();
-        testDelete();
 
+        initializeTimer();
+
+//        testInsertion();
+//        testRecherche();
+//        testUpdate();
+//        testDelete();
+
+    }
+
+    private Timer testCreateTimer() {
+        // Add a timer to work with
+        pdb.timerDao().addTimer(
+                new Timer(5000, 2000, 4000, 4)
+        );
+        List<Timer> timers = pdb.timerDao().getAllTimers();
+        Timer timer = timers.get(0);
+        timer.setActive();
+        Log.i("DIM", "Test timer: "+ timer.toString());
+        return timer;
     }
 
     private void testInsertion() {
@@ -192,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initializeTimer() {
+        Timer timer = testCreateTimer();
         ((TextView)findViewById(R.id.time_display)).setText("00:10");
         ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgress(100);
         ((Button)findViewById(R.id.leftButton)).setText(R.string.start_btn_lbl);

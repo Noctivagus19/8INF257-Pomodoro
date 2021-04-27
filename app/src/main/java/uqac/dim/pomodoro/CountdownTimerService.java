@@ -42,6 +42,7 @@ public class CountdownTimerService extends Service {
       mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
       showNotification();
+      Log.i("DIM", "The service has been created!");
    }
 
    @Nullable
