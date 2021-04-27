@@ -18,6 +18,9 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.reginald.editspinner.EditSpinner;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -34,6 +37,7 @@ import uqac.dim.pomodoro.entities.Todo;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int LAUNCH_MANAGETODOS_ACTIVITY = 1;
     private boolean mShouldUnbind;
     private CountdownTimerService mBoundService;
 
@@ -66,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
         pdb.todoDao().deleteTodos();
         pdb.timerDao().deleteTimers();
         pdb.categoryDao().deleteCategories();
-
         initializeTimer();
 
 //        testInsertion();
@@ -105,8 +108,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        pdb.todoDao().addTodo(new Todo( "Ceci est un Todo", currentDate, timers.get(0).getId(), categories.get(0).getId()));
-        pdb.todoDao().addTodo(new Todo( "Ceci est un autre Todo", currentDate, timers.get(0).getId(), categories.get(0).getId()));
+        pdb.todoDao().addTodo(new Todo( "Ceci est un Todo", currentDate, categories.get(0).getId()));
+        pdb.todoDao().addTodo(new Todo( "Bounty hunt d'un rogue squirrel de Jonquière", currentDate, categories.get(0).getId()));
+        pdb.todoDao().addTodo(new Todo( "Ceci est un autre Todo", currentDate, categories.get(0).getId()));
         for (Todo todo: pdb.todoDao().getAllTodos()) {
             Log.i("LOG", "INSERTION TODO: " + todo.toString());
         }
@@ -114,14 +118,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void testRecherche() {
+        Log.i("LOG", "Recherche TODO DANS LISTE : " + todos.get(0).toString());
         todo = pdb.todoDao().findById(todos.get(0).getId());
-        Log.i("LOG", "Recherche TODO : " + todo.toString());
-
-        timer = pdb.timerDao().findById(todo.getTimerId());
-        Log.i("LOG", "Timer of TODO : " + timer.toString());
+        Log.i("LOG", "Recherche LE MEME TODO DANS DB : " + todo.toString());
 
         category = pdb.categoryDao().findById(todo.getCategoryId());
         Log.i("LOG", "Category of TODO : " + category.toString());
+
+        Log.i("LOG", "Un timer dans la liste: " + timers.get(0).toString());
+        timer = pdb.timerDao().findById(timers.get(0).getId());
+        Log.i("LOG", "Le meme timer dans la bd: " + timer.toString());
     }
 
     private void testUpdate() {
@@ -140,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void testDelete() {
-        pdb.todoDao().deleteById(todos.get(0).getId());
+        pdb.todoDao().deleteTodo(todos.get(0));
         for (Todo todo: pdb.todoDao().getAllTodos()) {
             Log.i("LOG", "Apres delete TODO: " + todo.toString());
         }
@@ -263,6 +269,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void startManageTodosActivity(View view) {
+        Intent i = new Intent(this, ManageTodosActivity.class);
+        startActivityForResult(i, LAUNCH_MANAGETODOS_ACTIVITY);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i("LOG", "MAIN ACTIVITYRESULT");
+
+        if (requestCode == LAUNCH_MANAGETODOS_ACTIVITY) {
+            if(resultCode == MainActivity.RESULT_OK){
+                int todoId =data.getIntExtra(ManageTodosActivity.EXTRA_TODO_ID, -1);
+                String todoDescription = data.getStringExtra(ManageTodosActivity.EXTRA_TODO_DESCRIPTION);
+                Log.i("LOG", "EXTRA RECU : TODO ID:" + todoId);
+                Log.i("LOG", "EXTRA RECU : TODO DESCRIPTION:" + todoDescription);
+                updateTaskDisplay(todoDescription);
+            }
+            if (resultCode == MainActivity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }//onActivityResult
+
+    public void updateTaskDisplay(String todoDescription){
+        TextView taskDisplay = (TextView)findViewById(R.id.task_display);
+        taskDisplay.setText(todoDescription);
+    }
+
     private class TimerStatusReceiver extends BroadcastReceiver {
        @Override
        public void onReceive(Context context, Intent intent) {
@@ -281,6 +316,7 @@ public class MainActivity extends AppCompatActivity {
                    String rawTime = intent.getStringExtra("RAWTIME");
                    if (rawTime != null) {
                        double totalTime = 10000.0;
+                       Log.i("LOG", rawTime);
                        int thousand = Integer.parseInt(rawTime)/1000*1000;
 
                        int completionPercentage = (int)(Math.round(((long) thousand / totalTime) * 100.0));

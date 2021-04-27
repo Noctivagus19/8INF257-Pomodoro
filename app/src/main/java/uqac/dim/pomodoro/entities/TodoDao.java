@@ -1,5 +1,6 @@
 package uqac.dim.pomodoro.entities;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -11,6 +12,9 @@ import java.util.List;
 public interface TodoDao {
     @Query("SELECT * FROM todo")
     List<Todo> getAllTodos();
+
+    @Query("SELECT * FROM todo WHERE completionTime=-1")
+    List<Todo> getActiveTodos();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addTodo(Todo todo);
@@ -24,16 +28,9 @@ public interface TodoDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateTodo(Todo todo);
 
-    @Query("SELECT " +
-            "Todo.id, " +
-            "Todo.description, " +
-            "Todo.date, " +
-            "Todo.fk_categoryId, " +
-            "Todo.fk_timerId, " +
-            "Todo.completionTime " +
-            "FROM todo " +
-            "WHERE Todo.id=:id"
-    )
-    Todo findById(int id);
+    @Delete()
+    void deleteTodo(Todo todo);
 
+    @Query("SELECT * FROM todo WHERE Todo.id=:id")
+    Todo findById(int id);
 }

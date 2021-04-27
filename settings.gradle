@@ -1,2 +1,3 @@
+include ':editspinner'
 include ':app'
 rootProject.name = "pomodoro"

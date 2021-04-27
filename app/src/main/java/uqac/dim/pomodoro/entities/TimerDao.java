@@ -1,5 +1,6 @@
 package uqac.dim.pomodoro.entities;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -23,6 +24,9 @@ public interface TimerDao {
 
     @Query("delete from timer WHERE id=:id")
     void deleteById(int id);
+
+    @Delete()
+    void deleteTimer(Timer timer);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateTimer(Timer timer);

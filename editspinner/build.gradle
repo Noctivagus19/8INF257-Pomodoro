@@ -1,0 +1,25 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        minSdkVersion 30
+        targetSdkVersion 30
+
+        //buildConfigField("boolean", "DEBUG_LOG", rootProject.ext.DEBUG_LOG)
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    releaseImplementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+apply from: '../gradle/bintray-push.gradle'

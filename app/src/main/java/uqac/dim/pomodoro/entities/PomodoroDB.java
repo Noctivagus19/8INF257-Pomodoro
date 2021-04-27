@@ -1,5 +1,6 @@
 package uqac.dim.pomodoro.entities;
 import android.content.Context;
+import android.database.SQLException;
 
 import androidx.room.Database;
 import androidx.room.Room;
@@ -11,6 +12,7 @@ public abstract class PomodoroDB extends RoomDatabase {
     public abstract TodoDao todoDao();
     public abstract TimerDao timerDao();
     public abstract CategoryDao categoryDao();
+
 
     public static PomodoroDB getDatabase(Context context) {
         if (INSTANCE == null) {
