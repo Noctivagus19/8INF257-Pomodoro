@@ -73,6 +73,7 @@
                             android:layout_gravity="center"
                             android:layout_marginHorizontal="20dp"
                             android:layout_weight="80"
+                            android:enabled="false"
                             android:text="@string/left_btn" />
 
                         <Button

@@ -1,27 +1,22 @@
 package uqac.dim.pomodoro;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import java.lang.invoke.MethodHandle;
 import java.util.concurrent.TimeUnit;
 
 public class CountdownTimerService extends Service {
@@ -53,24 +48,28 @@ public class CountdownTimerService extends Service {
 
    private final IBinder mBinder = new LocalBinder();
 
+   public static String toHms(long ms) {
+      String hh = String.format("%02d", TimeUnit.MILLISECONDS.toHours(ms));
+      String mm = String.format("%02d", TimeUnit.MILLISECONDS.toMinutes(ms) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(ms)));
+      String ss = String.format("%02d", TimeUnit.MILLISECONDS.toSeconds(ms) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms)));
+
+      String hms = "";
+
+      if (!hh.equals("00")) {
+         hms = hms + hh + ":";
+      }
+
+      return hms + mm + ":" + ss;
+   }
+
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
 
       timer = new CountDownTimer(10000, 1000) {
          @Override
          public void onTick(long mMillisUntilFinished) {
-            String hh = String.format("%02d", TimeUnit.MILLISECONDS.toHours(mMillisUntilFinished));
-            String mm = String.format("%02d", TimeUnit.MILLISECONDS.toMinutes(mMillisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(mMillisUntilFinished)));
-            String ss = String.format("%02d", TimeUnit.MILLISECONDS.toSeconds(mMillisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(mMillisUntilFinished)));
 
-            String hms = "";
-
-            if (!hh.equals("00")) {
-               hms = hms + hh + ":";
-            }
-
-            hms = hms + mm + ":" + ss;
-
+            String hms = toHms(mMillisUntilFinished);
             Intent timerInfoIntent = new Intent(TIME_INFO);
             timerInfoIntent.putExtra("TIME", hms);
             timerInfoIntent.putExtra("STATUS", "RUNNING");

@@ -1,12 +1,11 @@
 package uqac.dim.pomodoro.entities;
 import android.content.Context;
-import android.database.SQLException;
 
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Todo.class, Category.class, Timer.class}, version = 2, exportSchema = false)
+@Database(entities = {Todo.class, Category.class, Timer.class}, version = 4, exportSchema = false)
 public abstract class PomodoroDB extends RoomDatabase {
     private static PomodoroDB INSTANCE;
     public abstract TodoDao todoDao();

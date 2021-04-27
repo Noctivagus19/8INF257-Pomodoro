@@ -30,4 +30,7 @@ public interface TimerDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateTimer(Timer timer);
+
+    @Query("SELECT * FROM timer WHERE status='ACTIVE'")
+    Timer getActiveTimer();
 }

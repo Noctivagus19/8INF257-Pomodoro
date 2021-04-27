@@ -1,9 +1,5 @@
 package uqac.dim.pomodoro;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,19 +13,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.reginald.editspinner.EditSpinner;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.w3c.dom.Text;
-
 import java.util.List;
 import java.util.Locale;
 
-import uqac.dim.pomodoro.CountdownTimerService;
 import uqac.dim.pomodoro.entities.Category;
 import uqac.dim.pomodoro.entities.PomodoroDB;
 import uqac.dim.pomodoro.entities.Timer;
@@ -70,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         pdb.todoDao().deleteTodos();
         pdb.timerDao().deleteTimers();
         pdb.categoryDao().deleteCategories();
+        testCreateTimer();
         initializeTimer();
 
 //        testInsertion();
@@ -87,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         List<Timer> timers = pdb.timerDao().getAllTimers();
         Timer timer = timers.get(0);
         timer.setActive();
+        pdb.timerDao().updateTimer(timer);
         Log.i("DIM", "Test timer: "+ timer.toString());
         return timer;
     }
@@ -158,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(receiver, new IntentFilter(CountdownTimerService.TIME_INFO));
+        setTimerWithTopTask();
     }
 
     @Override
@@ -209,15 +204,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("DIM", "Done btn clicked");
                 break;
         }
-    }
-
-    public void initializeTimer() {
-        Timer timer = testCreateTimer();
-        ((TextView)findViewById(R.id.time_display)).setText("00:10");
-        ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgress(100);
-        ((Button)findViewById(R.id.leftButton)).setText(R.string.start_btn_lbl);
-        ((Button)findViewById(R.id.rightButton)).setText(R.string.stop_btn_lbl);
-        timerStatus = "STOPPED";
     }
 
     public void startTimer() {
@@ -281,17 +267,44 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == LAUNCH_MANAGETODOS_ACTIVITY) {
             if(resultCode == MainActivity.RESULT_OK){
+/*
                 int todoId =data.getIntExtra(ManageTodosActivity.EXTRA_TODO_ID, -1);
                 String todoDescription = data.getStringExtra(ManageTodosActivity.EXTRA_TODO_DESCRIPTION);
                 Log.i("LOG", "EXTRA RECU : TODO ID:" + todoId);
                 Log.i("LOG", "EXTRA RECU : TODO DESCRIPTION:" + todoDescription);
                 updateTaskDisplay(todoDescription);
+*/
             }
             if (resultCode == MainActivity.RESULT_CANCELED) {
                 //Write your code if there's no result
             }
         }
     }//onActivityResult
+
+    public void initializeTimer() {
+        Timer timer = testCreateTimer();
+        ((TextView)findViewById(R.id.time_display)).setText("00:00");
+        ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgress(0);
+        ((Button)findViewById(R.id.leftButton)).setText(R.string.start_btn_lbl);
+        ((Button)findViewById(R.id.rightButton)).setText(R.string.stop_btn_lbl);
+        timerStatus = "STOPPED";
+    }
+
+    public void setTimerWithTopTask(){
+        if (!timerStatus.equals("RUNNING")) {
+            Todo topTodo = pdb.todoDao().getTopTodo();
+            if (topTodo != null) {
+                Log.i("LOG", "This is the todo at the top of the list"+topTodo.toString());
+                Timer activeTimer = pdb.timerDao().getActiveTimer();
+                if (activeTimer != null) {
+                    ((TextView)findViewById(R.id.time_display)).setText(CountdownTimerService.toHms(activeTimer.workMs));
+                    ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgress(100);
+                    ((TextView)findViewById(R.id.task_display)).setText(topTodo.getDescription());
+                    ((Button)findViewById(R.id.leftButton)).setEnabled(true);
+                }
+            }
+        }
+    }
 
     public void updateTaskDisplay(String todoDescription){
         TextView taskDisplay = (TextView)findViewById(R.id.task_display);
@@ -315,6 +328,7 @@ public class MainActivity extends AppCompatActivity {
                if (intent.hasExtra("RAWTIME")) {
                    String rawTime = intent.getStringExtra("RAWTIME");
                    if (rawTime != null) {
+                       // TODO: aller chercher le total time du timer courant
                        double totalTime = 10000.0;
                        Log.i("LOG", rawTime);
                        int thousand = Integer.parseInt(rawTime)/1000*1000;
