@@ -33,6 +33,12 @@ public class CountdownTimerService extends Service {
    private PomodoroDB pdb;
    private Todo todo;
    private Timer timer;
+   private String HMSTIME;
+   private String RAWTIME;
+   private String TOTALTIME;
+   private String TIMERTYPE;
+   private String STATUS;
+   Timer currentTimer;
 
    public class LocalBinder extends Binder {
       CountdownTimerService getService() {
@@ -44,6 +50,7 @@ public class CountdownTimerService extends Service {
    public void onCreate() {
       mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
       pdb = PomodoroDB.getDatabase(getApplicationContext());
+      currentTimer = pdb.timerDao().getActiveTimer();
 
       showNotification();
       Log.i("DIM", "The service has been created!");
@@ -74,21 +81,13 @@ public class CountdownTimerService extends Service {
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
 
-      Timer currentTimer = pdb.timerDao().getActiveTimer();
-
       workTimer = new CountDownTimer(currentTimer.workMs) {
          @Override
          public void onTick(long mMillisUntilFinished) {
-
-            String hms = toHms(mMillisUntilFinished);
-            Intent timerInfoIntent = new Intent(TIME_INFO);
-            timerInfoIntent.putExtra("TIME", hms);
-            timerInfoIntent.putExtra("STATUS", "RUNNING");
-            timerInfoIntent.putExtra("RAWTIME", ""+mMillisUntilFinished);
-            timerInfoIntent.putExtra("TOTALTIME", ""+currentTimer.workMs);
-            timerInfoIntent.putExtra("TIMERTYPE", "WORK");
-            LocalBroadcastManager.getInstance(CountdownTimerService.this)
-                    .sendBroadcast(timerInfoIntent);
+            updateTimerInfo("RUNNING", mMillisUntilFinished, "WORK");
+            LocalBroadcastManager
+                    .getInstance(CountdownTimerService.this)
+                    .sendBroadcast(getTimerInfoIntent());
          }
 
          @Override
@@ -148,6 +147,26 @@ public class CountdownTimerService extends Service {
       super.onDestroy();
    }
 
+   private void updateTimerInfo(String status, long rawTime, String timerType) {
+      STATUS = status;
+      RAWTIME = ""+rawTime;
+      HMSTIME = toHms(rawTime);
+      TOTALTIME = ""+currentTimer.workMs;
+      TIMERTYPE = timerType;
+   }
+
+   private Intent getTimerInfoIntent() {
+      Intent timerInfoIntent = new Intent(TIME_INFO);
+
+      timerInfoIntent.putExtra("TIME", HMSTIME);
+      timerInfoIntent.putExtra("STATUS", STATUS);
+      timerInfoIntent.putExtra("RAWTIME", RAWTIME);
+      timerInfoIntent.putExtra("TOTALTIME", TOTALTIME);
+      timerInfoIntent.putExtra("TIMERTYPE", TIMERTYPE);
+
+      return timerInfoIntent;
+   }
+
    public abstract class CountDownTimer {
       private final long mMillisInFuture;
       private final long mCountdownInterval;
@@ -166,8 +185,8 @@ public class CountdownTimerService extends Service {
        *    {@link #onTick(long)} callbacks.
        */
       public CountDownTimer(long millisInFuture) {
-          mMillisInFuture = millisInFuture;
-          mCountdownInterval = 1000;
+         mMillisInFuture = millisInFuture;
+         mCountdownInterval = 1000;
       }
 
       /*
@@ -260,7 +279,7 @@ public class CountdownTimerService extends Service {
                      while (delay < 0) delay += mCountdownInterval;
 
                      if (!mCancelled) {
-                      sendMessageDelayed(obtainMessage(MSG), delay);
+                        sendMessageDelayed(obtainMessage(MSG), delay);
                      }
                   }
                }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.text.SimpleDateFormat;
@@ -284,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
     public void initializeTimer() {
         Timer timer = testCreateTimer();
         ((TextView)findViewById(R.id.time_display)).setText("00:00");
-        ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgress(0);
+        ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgress(100);
         ((Button)findViewById(R.id.leftButton)).setText(R.string.start_btn_lbl);
         ((Button)findViewById(R.id.rightButton)).setText(R.string.stop_btn_lbl);
         timerStatus = "STOPPED";
@@ -320,11 +322,6 @@ public class MainActivity extends AppCompatActivity {
                            .setText(intent.getStringExtra("TIME"));
                }
 
-               if (intent.hasExtra("STATUS")) {
-                   timerStatus = intent.getStringExtra("STATUS");
-                   Log.i("DIM", timerStatus);
-               }
-
                if (intent.hasExtra("RAWTIME") && intent.hasExtra("TOTALTIME")) {
                    String rawTime = intent.getStringExtra("RAWTIME");
                    String sTotalTime = intent.getStringExtra("TOTALTIME");
@@ -339,13 +336,22 @@ public class MainActivity extends AppCompatActivity {
                    }
                }
 
-               if(intent.hasExtra("TIMERTYPE")){
-                   String timerType = intent.getStringExtra("TIMERTYPE");
-                   ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgressDrawable();
+               if (intent.hasExtra("STATUS")) {
+                   timerStatus = intent.getStringExtra("STATUS");
+                   Log.i("DIM", timerStatus);
+
+                   if (timerStatus.equals("COMPLETED"))
+                       initializeTimer();
                }
 
-               if (timerStatus.equals("COMPLETED"))
-                   initializeTimer();
+               if (intent.hasExtra("TIMERTYPE")) {
+                   String timerType = intent.getStringExtra("TIMERTYPE");
+                   if (timerStatus.equals("COMPLETED") && timerType.equals("WORK")) {
+                       Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.circular_progress_bar_pause, getApplicationContext().getTheme());
+                       ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgressDrawable(d);
+                   }
+               }
+               Log.i("LOG", "Timer Type: "+intent.getStringExtra("TIMERTYPE")+" Timer Status: "+timerStatus);
            }
        }
     }
