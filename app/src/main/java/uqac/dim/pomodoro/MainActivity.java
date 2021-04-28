@@ -325,11 +325,11 @@ public class MainActivity extends AppCompatActivity {
                    Log.i("DIM", timerStatus);
                }
 
-               if (intent.hasExtra("RAWTIME")) {
+               if (intent.hasExtra("RAWTIME") && intent.hasExtra("TOTALTIME")) {
                    String rawTime = intent.getStringExtra("RAWTIME");
+                   String sTotalTime = intent.getStringExtra("TOTALTIME");
                    if (rawTime != null) {
-                       // TODO: aller chercher le total time du timer courant
-                       double totalTime = 10000.0;
+                       double totalTime = Double.parseDouble(sTotalTime);
                        Log.i("LOG", rawTime);
                        int thousand = Integer.parseInt(rawTime)/1000*1000;
 
@@ -337,6 +337,11 @@ public class MainActivity extends AppCompatActivity {
                        ((ProgressBar) findViewById(R.id.timer_progress_bar))
                                .setProgress(completionPercentage);
                    }
+               }
+
+               if(intent.hasExtra("TIMERTYPE")){
+                   String timerType = intent.getStringExtra("TIMERTYPE");
+                   ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgressDrawable();
                }
 
                if (timerStatus.equals("COMPLETED"))

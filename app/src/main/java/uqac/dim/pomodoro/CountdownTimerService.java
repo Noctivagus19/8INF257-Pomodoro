@@ -19,12 +19,20 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.util.concurrent.TimeUnit;
 
+import uqac.dim.pomodoro.entities.PomodoroDB;
+import uqac.dim.pomodoro.entities.Timer;
+import uqac.dim.pomodoro.entities.Todo;
+
 public class CountdownTimerService extends Service {
    public static final String TIME_INFO = "time_info";
    private static final String NOTIFICATION_ID_STRING = "0";
    private NotificationManager mNM;
 
-   private CountDownTimer timer;
+   private CountDownTimer workTimer;
+
+   private PomodoroDB pdb;
+   private Todo todo;
+   private Timer timer;
 
    public class LocalBinder extends Binder {
       CountdownTimerService getService() {
@@ -35,6 +43,7 @@ public class CountdownTimerService extends Service {
    @Override
    public void onCreate() {
       mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+      pdb = PomodoroDB.getDatabase(getApplicationContext());
 
       showNotification();
       Log.i("DIM", "The service has been created!");
@@ -65,7 +74,9 @@ public class CountdownTimerService extends Service {
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
 
-      timer = new CountDownTimer(10000, 1000) {
+      Timer currentTimer = pdb.timerDao().getActiveTimer();
+
+      workTimer = new CountDownTimer(currentTimer.workMs) {
          @Override
          public void onTick(long mMillisUntilFinished) {
 
@@ -74,6 +85,8 @@ public class CountdownTimerService extends Service {
             timerInfoIntent.putExtra("TIME", hms);
             timerInfoIntent.putExtra("STATUS", "RUNNING");
             timerInfoIntent.putExtra("RAWTIME", ""+mMillisUntilFinished);
+            timerInfoIntent.putExtra("TOTALTIME", ""+currentTimer.workMs);
+            timerInfoIntent.putExtra("TIMERTYPE", "WORK");
             LocalBroadcastManager.getInstance(CountdownTimerService.this)
                     .sendBroadcast(timerInfoIntent);
          }
@@ -88,17 +101,17 @@ public class CountdownTimerService extends Service {
                     .sendBroadcast(timerInfoIntent);
          }
       };
-      timer.start();
+      workTimer.start();
 
       return START_NOT_STICKY;
    }
 
    public void pauseTimer() {
-      timer.pause();
+      workTimer.pause();
    }
 
    public void resumeTimer() {
-      timer.resume();
+      workTimer.resume();
    }
 
    public void showNotification() {
@@ -131,7 +144,7 @@ public class CountdownTimerService extends Service {
       LocalBroadcastManager.getInstance(CountdownTimerService.this).sendBroadcast(timerInfoIntent);
       //TODO: remove that integer parsing
       mNM.cancel(Integer.parseInt(NOTIFICATION_ID_STRING));
-      timer.cancel();
+      workTimer.cancel();
       super.onDestroy();
    }
 
@@ -152,9 +165,9 @@ public class CountdownTimerService extends Service {
        * @param countDownInterval: The interval along the way to receive
        *    {@link #onTick(long)} callbacks.
        */
-      public CountDownTimer(long millisInFuture, long countDownInterval) {
+      public CountDownTimer(long millisInFuture) {
           mMillisInFuture = millisInFuture;
-          mCountdownInterval = countDownInterval;
+          mCountdownInterval = 1000;
       }
 
       /*
