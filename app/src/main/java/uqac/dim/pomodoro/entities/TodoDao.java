@@ -16,8 +16,8 @@ public interface TodoDao {
     @Query("SELECT * FROM todo WHERE completionTime=-1")
     List<Todo> getActiveTodos();
 
-    @Query("SELECT * FROM todo LIMIT 1")
-    Todo getTopTodo();
+    @Query("SELECT * FROM todo WHERE completionTime=-1 LIMIT 1")
+    Todo getTopActiveTodo();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addTodo(Todo todo);

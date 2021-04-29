@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private Timer testCreateTimer() {
         // Add a timer to work with
         pdb.timerDao().addTimer(
-                new Timer(5000, 2000, 4000, 4)
+                new Timer(5000, 3000, 4000, 4)
         );
         List<Timer> timers = pdb.timerDao().getAllTimers();
         Timer timer = timers.get(0);
@@ -294,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setTimerWithTopTask(){
         if (!timerStatus.equals("RUNNING")) {
-            Todo topTodo = pdb.todoDao().getTopTodo();
+            Todo topTodo = pdb.todoDao().getTopActiveTodo();
             if (topTodo != null) {
                 Log.i("LOG", "This is the todo at the top of the list"+topTodo.toString());
                 Timer activeTimer = pdb.timerDao().getActiveTimer();
