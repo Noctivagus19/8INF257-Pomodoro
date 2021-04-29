@@ -10,6 +10,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -64,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
         ((Button)findViewById(R.id.rightButton))
                 .setOnClickListener((View.OnClickListener) this::onRightClick);
 
-
         pdb = PomodoroDB.getDatabase(getApplicationContext());
         pdb.todoDao().deleteTodos();
         pdb.timerDao().deleteTimers();
@@ -77,6 +78,12 @@ public class MainActivity extends AppCompatActivity {
 //        testUpdate();
 //        testDelete();
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
     }
 
     private Timer testCreateTimer() {
@@ -266,9 +273,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void startManageTodosActivity(View view) {
-        Intent i = new Intent(this, ManageTodosActivity.class);
-        startActivityForResult(i, LAUNCH_MANAGETODOS_ACTIVITY);
+    public void startManageTodosActivity(MenuItem menuItem) {
+        startActivity(new Intent(this, ManageTodosActivity.class));
     }
 
     @Override

@@ -2,7 +2,6 @@ package uqac.dim.pomodoro;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -11,38 +10,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-//import androidx.recyclerview.widget.RecyclerView;
+
+import com.reginald.editspinner.EditSpinner;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 
 import uqac.dim.pomodoro.entities.Category;
 import uqac.dim.pomodoro.entities.PomodoroDB;
 import uqac.dim.pomodoro.entities.Todo;
-import android.app.ListActivity;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.reginald.editspinner.EditSpinner;
+//import androidx.recyclerview.widget.RecyclerView;
 
 public class ManageTodosActivity extends AppCompatActivity implements MyRecyclerViewAdapter.ItemClickListener{
     public final static String EXTRA_TODO_ID = "uqac.dim.mafag.TODO_ID";
@@ -59,17 +52,12 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
     public void onItemClick(View view, int position) {
         if (MyRecyclerViewAdapter.getEditRow() != -1){
             if((view instanceof Button) && (position == MyRecyclerViewAdapter.getEditRow())) {
-                Log.i("LOG", "Options Todo clicked position " + position);
                 openOptionsTodo(view, todos.get(position), position);
             }
         }
         else {
             if(view instanceof Button){
-                Log.i("LOG","Options Todo clicked position "+ position);
                 openOptionsTodo(view, todos.get(position), position);
-            }else {
-                Log.i("LOG", "RecyclerViewClick position: " + rvadapter.getItem(position));
-                returnIntent(rvadapter.getItem(position).getId(), rvadapter.getItem(position).getDescription());
             }
         }
     }
@@ -200,12 +188,12 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                 String addTodoDescription = todoDescription.getText().toString();
 
                 if (addTodoDescription.equals("")){
-                    Toast toast= Toast.makeText(ManageTodosActivity.this, "Vous devez entrer une description de todo" , Toast.LENGTH_LONG);
+                    Toast toast= Toast.makeText(ManageTodosActivity.this, "Missing task description" , Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.TOP, 0, 140);
                     toast.show();
                 }
                 else if (categoryName.equals("")){
-                    Toast toast= Toast.makeText(ManageTodosActivity.this, "Vous devez sélectionner une catégorie" , Toast.LENGTH_LONG);
+                    Toast toast= Toast.makeText(ManageTodosActivity.this, "Missing task category" , Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.TOP, 0, 140);
                     toast.show();
                 }
@@ -241,7 +229,6 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                     todos = pdb.todoDao().getActiveTodos();
                     rvadapter.updateData(todos);
                     initRecyclerView();
-
                 }
                 break;
         }
@@ -309,20 +296,6 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
     @Override
     protected void onPause() {
         super.onPause();
-    }
-
-    public void returnIntent(int extra_todoId, String extra_TodoDescription){
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra(EXTRA_TODO_ID, extra_todoId);
-        returnIntent.putExtra(EXTRA_TODO_DESCRIPTION, extra_TodoDescription);
-        setResult(MainActivity.RESULT_OK, returnIntent);
-        finish();
-    }
-
-    public void returnIntent(){
-        Intent returnIntent = new Intent();
-        setResult(MainActivity.RESULT_CANCELED, returnIntent);
-        finish();
     }
 
     public void clickDeleteCategory(View view) {

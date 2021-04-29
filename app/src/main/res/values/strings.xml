@@ -9,5 +9,7 @@
     <string name="done_btn_lbl">DONE</string>
     <string name="start_btn_lbl">START</string>
     <string name="stop_btn_lbl">STOP</string>
+    <string name="menu_item_title_timer">Timer</string>
+    <string name="menu_item_title_pomodoros">Pomodoros</string>
 
 </resources>
