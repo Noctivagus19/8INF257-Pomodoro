@@ -95,7 +95,13 @@ public class CountdownTimerService extends Service {
               .getInstance(CountdownTimerService.this)
               .sendBroadcast(getTimerInfoIntent());
 
-      workTimer = new CountDownTimer(currentTimer.workMs) {
+      int timerMs = 0;
+      if (TIMERTYPE.equals("WORK"))
+          timerMs = currentTimer.workMs;
+      else
+         timerMs = currentTimer.pauseMs;
+
+      workTimer = new CountDownTimer(timerMs) {
          @Override
          public void onTick(long mMillisUntilFinished) {
             updateTimerInfo("RUNNING", mMillisUntilFinished);
@@ -110,8 +116,15 @@ public class CountdownTimerService extends Service {
             LocalBroadcastManager.getInstance(CountdownTimerService.this)
                     .sendBroadcast(getTimerInfoIntent());
             if (TIMERTYPE.equals("WORK")) {
+               Todo currentTodo = pdb.todoDao().getTopActiveTodo();
+               int currentTimerMs = currentTimer.workMs;
+               currentTodo.setCompletionTime(currentTimerMs);
+               pdb.todoDao().updateTodo(currentTodo);
+
                toggleTimerType();
                startTimer();
+            } else {
+               Log.i("LOG", "This is a test!");
             }
          }
       };
