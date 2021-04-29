@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 rightBtn.setEnabled(false);
                 break;
             case "PAUSED":
-                Log.i("DIM", "Done btn clicked");
+                skipTask();
                 break;
         }
     }
@@ -232,7 +232,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CountdownTimerService.class);
         stopService(intent);
         doUnbindService();
-        initializeTimer();
+    }
+
+    public void skipTask() {
+        mBoundService.skipTask();
     }
 
     private final ServiceConnection mConnection = new ServiceConnection() {
@@ -356,7 +359,6 @@ public class MainActivity extends AppCompatActivity {
                    timerStatus = intent.getStringExtra("STATUS");
                }
 
-
                if (intent.hasExtra("TIMERTYPE")) {
                    String timerType = intent.getStringExtra("TIMERTYPE");
                    if (timerStatus.equals("STARTED")) {
@@ -370,6 +372,10 @@ public class MainActivity extends AppCompatActivity {
                    }
                }
                Log.i("LOG", "Timer Type: "+intent.getStringExtra("TIMERTYPE")+" Timer Status: "+timerStatus);
+
+               if (timerStatus.equals("STOPPED")) {
+                   setTimerWithTopTask();
+               }
            }
        }
     }

@@ -120,9 +120,7 @@ public class CountdownTimerService extends Service {
                     .sendBroadcast(getTimerInfoIntent());
             if (TIMERTYPE.equals("WORK")) {
                currentTodo = pdb.todoDao().getTopActiveTodo();
-               int currentTimerMs = currentTimer.workMs;
-               currentTodo.setCompletionTime(currentTimerMs);
-               pdb.todoDao().updateTodo(currentTodo);
+               consumeTask();
 
                toggleTimerType();
                startTimer();
@@ -134,6 +132,11 @@ public class CountdownTimerService extends Service {
       workTimer.start();
    }
 
+   private void consumeTask() {
+      currentTodo.setCompletionTime(currentTimer.workMs);
+      pdb.todoDao().updateTodo(currentTodo);
+   }
+
    public void pauseTimer() {
       workTimer.pause();
    }
@@ -142,10 +145,18 @@ public class CountdownTimerService extends Service {
       workTimer.resume();
    }
 
+   public void skipTask() {
+      consumeTask();
+      Todo task = pdb.todoDao().getTopActiveTodo();
+      updateTimerInfo("STOPPED", 0);
+      LocalBroadcastManager.getInstance(CountdownTimerService.this)
+              .sendBroadcast(getTimerInfoIntent());
+   }
+
    public void showNotification() {
       Intent notificationIntent = new Intent(this, MainActivity.class);
       PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-               notificationIntent, 0);
+              notificationIntent, 0);
 
       NotificationChannel channel = new NotificationChannel(
               NOTIFICATION_ID_STRING,
@@ -157,10 +168,10 @@ public class CountdownTimerService extends Service {
 
       NotificationCompat.Builder notifyBuilder =
               new NotificationCompat.Builder(this, NOTIFICATION_ID_STRING)
-              .setContentTitle("Pomodoro titmer")
-              .setSmallIcon(R.drawable.ic_launcher_foreground)
-              .setContentText("Pomodoro timer is running")
-              .setContentIntent(pendingIntent);
+                      .setContentTitle("Pomodoro titmer")
+                      .setSmallIcon(R.drawable.ic_launcher_foreground)
+                      .setContentText("Pomodoro timer is running")
+                      .setContentIntent(pendingIntent);
 
       mNM.notify(0, notifyBuilder.build());
    }
