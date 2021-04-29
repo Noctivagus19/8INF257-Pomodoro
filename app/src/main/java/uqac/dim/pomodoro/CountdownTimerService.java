@@ -36,7 +36,7 @@ public class CountdownTimerService extends Service {
    private String HMSTIME;
    private String RAWTIME;
    private String TOTALTIME;
-   private String TIMERTYPE;
+   private String TIMERTYPE = "WORK";
    private String STATUS;
    Timer currentTimer;
 
@@ -80,11 +80,25 @@ public class CountdownTimerService extends Service {
 
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
+      if (intent.hasExtra("TIMERTYPE")) {
+         setTimerType(intent.getStringExtra("TIMERTYPE"));
+      }
+
+      startTimer();
+
+      return START_NOT_STICKY;
+   }
+
+   private void startTimer() {
+      setTimerStatus("STARTED");
+      LocalBroadcastManager
+              .getInstance(CountdownTimerService.this)
+              .sendBroadcast(getTimerInfoIntent());
 
       workTimer = new CountDownTimer(currentTimer.workMs) {
          @Override
          public void onTick(long mMillisUntilFinished) {
-            updateTimerInfo("RUNNING", mMillisUntilFinished, "WORK");
+            updateTimerInfo("RUNNING", mMillisUntilFinished);
             LocalBroadcastManager
                     .getInstance(CountdownTimerService.this)
                     .sendBroadcast(getTimerInfoIntent());
@@ -92,14 +106,16 @@ public class CountdownTimerService extends Service {
 
          @Override
          public void onFinish() {
-            updateTimerInfo("COMPLETED", 0, "WORK");
+            updateTimerInfo("COMPLETED", 0);
             LocalBroadcastManager.getInstance(CountdownTimerService.this)
                     .sendBroadcast(getTimerInfoIntent());
+            if (TIMERTYPE.equals("WORK")) {
+               toggleTimerType();
+               startTimer();
+            }
          }
       };
       workTimer.start();
-
-      return START_NOT_STICKY;
    }
 
    public void pauseTimer() {
@@ -135,24 +151,47 @@ public class CountdownTimerService extends Service {
 
    @Override
    public void onDestroy() {
-      updateTimerInfo("STOPPED", 0, "WORK");
-      LocalBroadcastManager.getInstance(CountdownTimerService.this).sendBroadcast(getTimerInfoIntent());
-      //TODO: remove that integer parsing
+/*
+      String nextTimerType = "";
+      if (TIMERTYPE.equals("WORK")) {
+         nextTimerType = "PAUSE";
+         updateTimerInfo("STOPPED", 0, "WORK");
+      } else if (TIMERTYPE.equals("PAUSE")) {
+         nextTimerType = "WORK";
+         updateTimerInfo("STOPPED", 0, "PAUSE");
+      }
+*/
+      updateTimerInfo("STOPPED", 0);
+      LocalBroadcastManager
+              .getInstance(CountdownTimerService.this)
+              .sendBroadcast(getTimerInfoIntent());
       mNM.cancel(Integer.parseInt(NOTIFICATION_ID_STRING));
       workTimer.cancel();
       super.onDestroy();
    }
 
-   private void updateTimerInfo(String status, long rawTime, String timerType) {
+   private void updateTimerInfo(String status, long rawTime) {
       STATUS = status;
       RAWTIME = ""+rawTime;
       HMSTIME = toHms(rawTime);
       TOTALTIME = ""+currentTimer.workMs;
-      TIMERTYPE = timerType;
    }
 
-   private void updateTimerInfo(String status) {
-      STATUS = status;
+   private void setTimerType(String type) {
+      this.TIMERTYPE = type;
+   }
+
+   private void toggleTimerType() {
+      if (TIMERTYPE.equals("WORK")) {
+         TIMERTYPE = "PAUSE";
+      }
+      else if (TIMERTYPE.equals("PAUSE")) {
+         TIMERTYPE = "WORK";
+      }
+   }
+
+   private void setTimerStatus(String status) {
+      this.STATUS = status;
    }
 
    private Intent getTimerInfoIntent() {
@@ -221,7 +260,7 @@ public class CountdownTimerService extends Service {
          mHandler.removeMessages(MSG);
          mPauseTime = mStopTimeInFuture - SystemClock.elapsedRealtime();
          mPaused = true;
-         updateTimerInfo("PAUSED");
+         setTimerStatus("PAUSED");
          LocalBroadcastManager
                  .getInstance(CountdownTimerService.this)
                  .sendBroadcast(getTimerInfoIntent());
@@ -235,7 +274,7 @@ public class CountdownTimerService extends Service {
          mStopTimeInFuture = mPauseTime + SystemClock.elapsedRealtime();
          mPaused = false;
          mHandler.sendMessage(mHandler.obtainMessage(MSG));
-         updateTimerInfo("RUNNING");
+         setTimerStatus("RUNNING");
          LocalBroadcastManager
                  .getInstance(CountdownTimerService.this)
                  .sendBroadcast(getTimerInfoIntent());

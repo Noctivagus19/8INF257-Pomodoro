@@ -211,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
     public void startTimer() {
         doBindService();
         Intent intent = new Intent(this, CountdownTimerService.class);
+        intent.putExtra("TIMERTYPE", "WORK");
         startService(intent);
     }
 
@@ -245,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                 mConnection, Context.BIND_AUTO_CREATE)) {
             mShouldUnbind = true;
         } else {
-            Log.e("MY_APP_TAG", "Error: The requested service doesn't " +
+            Log.e("LOG", "Error: The requested service doesn't " +
                     "exist, or this client isn't allowed access to it.");
         }
     }
@@ -284,7 +285,6 @@ public class MainActivity extends AppCompatActivity {
     }//onActivityResult
 
     public void initializeTimer() {
-        Timer timer = testCreateTimer();
         ((TextView)findViewById(R.id.time_display)).setText("00:00");
         ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgress(100);
         ((Button)findViewById(R.id.leftButton)).setText(R.string.start_btn_lbl);
@@ -338,17 +338,20 @@ public class MainActivity extends AppCompatActivity {
 
                if (intent.hasExtra("STATUS")) {
                    timerStatus = intent.getStringExtra("STATUS");
-                   Log.i("DIM", timerStatus);
-
-                   if (timerStatus.equals("COMPLETED"))
-                       initializeTimer();
                }
+
 
                if (intent.hasExtra("TIMERTYPE")) {
                    String timerType = intent.getStringExtra("TIMERTYPE");
-                   if (timerStatus.equals("COMPLETED") && timerType.equals("WORK")) {
-                       Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.circular_progress_bar_pause, getApplicationContext().getTheme());
+                   if (timerStatus.equals("STARTED")) {
+                       int drawableId = R.drawable.circular_progress_bar_work;
+                       if (timerType.equals("PAUSE")) {
+                           drawableId = R.drawable.circular_progress_bar_pause;
+                       }
+                       Drawable d = ResourcesCompat.getDrawable(getResources(), drawableId, getApplicationContext().getTheme());
                        ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgressDrawable(d);
+                   } else if (timerStatus.equals("COMPLETED") && timerType.equals("PAUSE")) {
+                      Log.i("LOG", "Timer finished the pause");
                    }
                }
                Log.i("LOG", "Timer Type: "+intent.getStringExtra("TIMERTYPE")+" Timer Status: "+timerStatus);
