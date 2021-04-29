@@ -19,7 +19,7 @@
                     android:indeterminate="false"
                     android:max="100"
                     android:progress="100"
-                    android:progressDrawable="@drawable/circular_progress_bar" />
+                    android:progressDrawable="@drawable/circular_progress_bar_work" />
 
                 <TextView
                     android:id="@+id/time_display"
@@ -71,8 +71,9 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
-                            android:layout_marginHorizontal="20dp"
-                            android:layout_weight="80"
+                            android:layout_marginHorizontal="15dp"
+                            android:layout_weight="85"
+                            android:enabled="false"
                             android:text="@string/left_btn" />
 
                         <Button
@@ -80,8 +81,8 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_gravity="center_horizontal"
-                            android:layout_marginHorizontal="20dp"
-                            android:layout_weight="80"
+                            android:layout_marginHorizontal="15dp"
+                            android:layout_weight="85"
                             android:enabled="false"
                             android:text="@string/right_btn" />
 
@@ -90,8 +91,8 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_gravity="center_horizontal"
-                            android:layout_marginHorizontal="20dp"
-                            android:layout_weight="80"
+                            android:layout_marginHorizontal="15dp"
+                            android:layout_weight="85"
                             android:enabled="true"
                             android:onClick="startManageTodosActivity"
                             android:text="TODO"/>
