@@ -32,6 +32,7 @@ public class CountdownTimerService extends Service {
 
    private PomodoroDB pdb;
    private Todo todo;
+   private Todo currentTodo;
    private Timer timer;
    private String HMSTIME;
    private String RAWTIME;
@@ -50,7 +51,6 @@ public class CountdownTimerService extends Service {
    public void onCreate() {
       mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
       pdb = PomodoroDB.getDatabase(getApplicationContext());
-      currentTimer = pdb.timerDao().getActiveTimer();
 
       showNotification();
       Log.i("DIM", "The service has been created!");
@@ -84,7 +84,10 @@ public class CountdownTimerService extends Service {
          setTimerType(intent.getStringExtra("TIMERTYPE"));
       }
 
-      startTimer();
+      currentTimer = pdb.timerDao().getActiveTimer();
+      currentTodo = pdb.todoDao().getTopActiveTodo();
+      if (currentTodo != null)
+         startTimer();
 
       return START_NOT_STICKY;
    }
@@ -116,7 +119,7 @@ public class CountdownTimerService extends Service {
             LocalBroadcastManager.getInstance(CountdownTimerService.this)
                     .sendBroadcast(getTimerInfoIntent());
             if (TIMERTYPE.equals("WORK")) {
-               Todo currentTodo = pdb.todoDao().getTopActiveTodo();
+               currentTodo = pdb.todoDao().getTopActiveTodo();
                int currentTimerMs = currentTimer.workMs;
                currentTodo.setCompletionTime(currentTimerMs);
                pdb.todoDao().updateTodo(currentTodo);

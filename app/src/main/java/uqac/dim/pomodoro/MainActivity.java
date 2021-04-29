@@ -47,10 +47,15 @@ public class MainActivity extends AppCompatActivity {
     private List<Timer> timers;
     private List<Category> categories;
 
+    private int workPbId;
+    private int pausePbId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        workPbId = R.drawable.circular_progress_bar_work;
+        pausePbId = R.drawable.circular_progress_bar_pause;
 
         receiver = new TimerStatusReceiver();
 
@@ -284,24 +289,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }//onActivityResult
 
+    private void setButtons() {
+        Button leftBtn = ((Button)findViewById(R.id.leftButton));
+        Button rightBtn = ((Button)findViewById(R.id.rightButton));
+        leftBtn.setText(R.string.start_btn_lbl);
+        rightBtn.setText(R.string.stop_btn_lbl);
+        leftBtn.setEnabled(false);
+        rightBtn.setEnabled(false);
+    }
+
     public void initializeTimer() {
         ((TextView)findViewById(R.id.time_display)).setText("00:00");
-        ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgress(100);
-        ((Button)findViewById(R.id.leftButton)).setText(R.string.start_btn_lbl);
-        ((Button)findViewById(R.id.rightButton)).setText(R.string.stop_btn_lbl);
+        ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgress(0);
+        ((TextView)findViewById(R.id.task_display)).setText("");
+        setButtons();
         timerStatus = "STOPPED";
     }
 
     public void setTimerWithTopTask(){
         if (!timerStatus.equals("RUNNING")) {
+            initializeTimer();
             Todo topTodo = pdb.todoDao().getTopActiveTodo();
             if (topTodo != null) {
-                Log.i("LOG", "This is the todo at the top of the list"+topTodo.toString());
                 Timer activeTimer = pdb.timerDao().getActiveTimer();
                 if (activeTimer != null) {
+                    redrawProgressBar(workPbId);
                     ((TextView)findViewById(R.id.time_display)).setText(CountdownTimerService.toHms(activeTimer.workMs));
                     ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgress(100);
                     ((TextView)findViewById(R.id.task_display)).setText(topTodo.getDescription());
+                    setButtons();
                     ((Button)findViewById(R.id.leftButton)).setEnabled(true);
                 }
             }
@@ -344,18 +360,22 @@ public class MainActivity extends AppCompatActivity {
                if (intent.hasExtra("TIMERTYPE")) {
                    String timerType = intent.getStringExtra("TIMERTYPE");
                    if (timerStatus.equals("STARTED")) {
-                       int drawableId = R.drawable.circular_progress_bar_work;
-                       if (timerType.equals("PAUSE")) {
-                           drawableId = R.drawable.circular_progress_bar_pause;
+                       if (timerType.equals("WORK")) {
+                           redrawProgressBar(workPbId);
+                       } else {
+                           redrawProgressBar(pausePbId);
                        }
-                       Drawable d = ResourcesCompat.getDrawable(getResources(), drawableId, getApplicationContext().getTheme());
-                       ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgressDrawable(d);
                    } else if (timerStatus.equals("COMPLETED") && timerType.equals("PAUSE")) {
-                      Log.i("LOG", "Timer finished the pause");
+                       setTimerWithTopTask();
                    }
                }
                Log.i("LOG", "Timer Type: "+intent.getStringExtra("TIMERTYPE")+" Timer Status: "+timerStatus);
            }
        }
+    }
+
+    private void redrawProgressBar(int drawableId) {
+        Drawable d = ResourcesCompat.getDrawable(getResources(), drawableId, getApplicationContext().getTheme());
+        ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgressDrawable(d);
     }
 }
