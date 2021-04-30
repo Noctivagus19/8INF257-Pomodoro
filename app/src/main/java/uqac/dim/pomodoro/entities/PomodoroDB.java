@@ -5,7 +5,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Todo.class, Category.class, Timer.class}, version = 4, exportSchema = false)
+@Database(entities = {Todo.class, Category.class, Timer.class}, version = 5, exportSchema = false)
 public abstract class PomodoroDB extends RoomDatabase {
     private static PomodoroDB INSTANCE;
     public abstract TodoDao todoDao();

@@ -67,9 +67,9 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener((View.OnClickListener) this::onRightClick);
 
         pdb = PomodoroDB.getDatabase(getApplicationContext());
-        pdb.todoDao().deleteTodos();
+        //pdb.todoDao().deleteTodos();
         pdb.timerDao().deleteTimers();
-        pdb.categoryDao().deleteCategories();
+        //pdb.categoryDao().deleteCategories();
         testCreateTimer();
         initializeTimer();
 
@@ -89,18 +89,17 @@ public class MainActivity extends AppCompatActivity {
     private Timer testCreateTimer() {
         // Add a timer to work with
         pdb.timerDao().addTimer(
-                new Timer(5000, 3000, 4000, 4)
+                new Timer("Test timer",5000, 3000, 4000, 4)
         );
         List<Timer> timers = pdb.timerDao().getAllTimers();
         Timer timer = timers.get(0);
         timer.setActive();
         pdb.timerDao().updateTimer(timer);
-        Log.i("DIM", "Test timer: "+ timer.toString());
         return timer;
     }
 
     private void testInsertion() {
-        pdb.timerDao().addTimer(new Timer( 1000000000, 10000, 100000,100000));
+        pdb.timerDao().addTimer(new Timer( "Test timer", 1000000000, 10000, 100000,100000));
         for (Timer timer : pdb.timerDao().getAllTimers()) {
             Log.i("LOG", "INSERTION TIMER : " + timer.toString());
         }
@@ -275,6 +274,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void startManageTodosActivity(MenuItem menuItem) {
         startActivity(new Intent(this, ManageTodosActivity.class));
+    }
+
+    public void startManageTimersActivity(MenuItem menuItem) {
+        startActivity(new Intent(this, ManageTimersActivity.class));
     }
 
     @Override

@@ -11,5 +11,10 @@
     <string name="stop_btn_lbl">STOP</string>
     <string name="menu_item_title_timer">Timer</string>
     <string name="menu_item_title_pomodoros">Pomodoros</string>
+    <string name="menu_item_title_timers">Timers</string>
+    <string name="work_time_label">Work time:</string>
+    <string name="pause_length_label">Pause length</string>
+    <string name="long_pause_length_label">Long pause length:</string>
+    <string name="pause_interval_label"># pauses before long pause:</string>
 
 </resources>
