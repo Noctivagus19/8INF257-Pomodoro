@@ -85,7 +85,6 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
         initEditSpinner(0);
     }
 
-
     private void initEditSpinner(int selected) {
         categories = pdb.categoryDao().getActiveCategories();
         categories.add(0, new Category("","Active"));
@@ -234,7 +233,6 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
         }
 
     }
-
 
     public void openOptionsTodo(View view, Todo todo, int position){
 
