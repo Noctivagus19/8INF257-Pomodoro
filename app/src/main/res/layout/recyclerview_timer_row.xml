@@ -24,7 +24,7 @@
                             android:layout_height="wrap_content"
                             android:layout_width="0dp"
                             android:layout_weight="70"
-                            android:text="@string/work_time_label"/>
+                            android:text="@string/pomodoro_length_label"/>
 
                         <TextView
                             android:layout_height="wrap_content"

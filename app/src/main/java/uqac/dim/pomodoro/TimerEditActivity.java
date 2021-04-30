@@ -8,8 +8,6 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.List;
-
 import uqac.dim.pomodoro.entities.PomodoroDB;
 import uqac.dim.pomodoro.entities.Timer;
 
@@ -46,14 +44,17 @@ public class TimerEditActivity extends AppCompatActivity {
             isNew = true;
 
         if (!isNew) {
-            timerId = Integer.parseInt(i.getStringExtra("TIMERID"));
-            Timer timer = pdb.timerDao().getTimer(timerId);
-            if (timer != null) {
-                nameField.setText(timer.getName());
-                pomodoroField.setText(toMinutes(timer.getWorkMs()));
-                pauseField.setText(toMinutes(timer.getPauseMs()));
-                longPauseField.setText(toMinutes(timer.getLongPauseMs()));
-                pauseIntervalsField.setText(timer.getPauseIntervals());
+            String sTimerId = i.getStringExtra("TIMERID");
+            if (sTimerId != null) {
+                timerId = Integer.parseInt(sTimerId);
+                Timer timer = pdb.timerDao().getTimer(timerId);
+                if (timer != null) {
+                    nameField.setText(timer.getName());
+                    pomodoroField.setText(String.valueOf(toMinutes(timer.getWorkMs())));
+                    pauseField.setText(String.valueOf(toMinutes(timer.getPauseMs())));
+                    longPauseField.setText(String.valueOf(toMinutes(timer.getLongPauseMs())));
+                    pauseIntervalsField.setText(String.valueOf(timer.getPauseIntervals()));
+                }
             }
         }
     }
@@ -68,8 +69,6 @@ public class TimerEditActivity extends AppCompatActivity {
         );
         if (isNew) {
             pdb.timerDao().addTimer(timer);
-            List<Timer> timers = pdb.timerDao().getAllTimers();
-            Timer testTimer = timers.get(0);
         } else {
             Timer existingTimer = pdb.timerDao().getTimer(timerId);
             existingTimer.setName(timer.getName());
@@ -79,13 +78,19 @@ public class TimerEditActivity extends AppCompatActivity {
             existingTimer.setPauseIntervals(timer.getPauseIntervals());
             pdb.timerDao().updateTimer(timer);
         }
+        startActivity(new Intent(this, ManageTimersActivity.class));
     }
 
-    private int toMinutes(int ms) {
+    public void deleteTimer(View view) {
+        pdb.timerDao().deleteById(timerId);
+        startActivity(new Intent(this, ManageTimersActivity.class));
+    }
+
+    public static int toMinutes(int ms) {
         return ms/60000;
     }
 
-    private int toMs(int minutes) {
+    public static int toMs(int minutes) {
         return minutes*60000;
     }
 }

@@ -12,8 +12,6 @@ import java.util.List;
 
 import uqac.dim.pomodoro.entities.Timer;
 
-import static uqac.dim.pomodoro.CountdownTimerService.toHms;
-
 public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecyclerViewAdapter.ViewHolder> {
 
     private List<Timer> mData;
@@ -37,11 +35,11 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
     public void onBindViewHolder(ViewHolder holder, int position) {
         String timerName = mData.get(position).getName();
         holder.timerName.setText(timerName);
-        String workLength = toHms(mData.get(position).getWorkMs());
+        String workLength = String.valueOf(TimerEditActivity.toMinutes(mData.get(position).getWorkMs()));
         holder.workLength.setText(workLength);
-        String pauseLength = toHms(mData.get(position).getPauseMs());
+        String pauseLength = String.valueOf(TimerEditActivity.toMinutes(mData.get(position).getPauseMs()));
         holder.pauseLength.setText(pauseLength);
-        String longPauseLength = toHms(mData.get(position).getLongPauseMs());
+        String longPauseLength = String.valueOf(TimerEditActivity.toMinutes(mData.get(position).getLongPauseMs()));
         holder.longPauseLength.setText(longPauseLength);
         String pauseIntervals = "" + mData.get(position).getPauseIntervals();
         holder.pauseIntervals.setText(pauseIntervals);

@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Timer testCreateTimer() {
         pdb.timerDao().addTimer(
-            new Timer("Test timer ",5000, 3000, 4000, 4)
+            new Timer("Test timer ",2*60000, 60000, 5*60000, 4)
         );
         List<Timer> timers = pdb.timerDao().getAllTimers();
         Timer timer = timers.get(0);

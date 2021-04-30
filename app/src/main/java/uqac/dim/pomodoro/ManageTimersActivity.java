@@ -52,6 +52,10 @@ public class ManageTimersActivity extends AppCompatActivity implements TimerRecy
 
     @Override
     public void onItemClick(View view, int position) {
+        Timer timer = adapter.getItem(position);
+        Intent i = new Intent(this, TimerEditActivity.class);
+        i.putExtra("TIMERID", ""+timer.getId());
+        startActivity(i);
         Log.i("LOG", "You clicked "+adapter.getItem(position) + " on row number " + position);
     }
 }
