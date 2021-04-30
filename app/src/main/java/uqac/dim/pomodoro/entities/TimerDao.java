@@ -36,4 +36,7 @@ public interface TimerDao {
 
     @Query("SELECT * FROM timer WHERE status='ACTIVE'")
     Timer getActiveTimer();
+
+    @Query("SELECT * FROM timer WHERE id=:id")
+    Timer getTimer(int id);
 }

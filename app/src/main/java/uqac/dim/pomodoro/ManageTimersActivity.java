@@ -1,5 +1,6 @@
 package uqac.dim.pomodoro;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +35,19 @@ public class ManageTimersActivity extends AppCompatActivity implements TimerRecy
         adapter = new TimerRecyclerViewAdapter(this, timers);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
+
+        findViewById(R.id.fabAddTimer).setOnClickListener(
+                (fab) -> {
+                    startActivity(new Intent(this, TimerEditActivity.class));
+                }
+        );
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
     }
 
     @Override

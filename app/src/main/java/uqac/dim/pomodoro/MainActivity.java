@@ -61,10 +61,11 @@ public class MainActivity extends AppCompatActivity {
 
         receiver = new TimerStatusReceiver();
 
-        ((Button)findViewById(R.id.leftButton))
+        findViewById(R.id.leftButton)
                 .setOnClickListener((View.OnClickListener) this::onLeftClick);
-        ((Button)findViewById(R.id.rightButton))
+        findViewById(R.id.rightButton)
                 .setOnClickListener((View.OnClickListener) this::onRightClick);
+
 
         pdb = PomodoroDB.getDatabase(getApplicationContext());
         //pdb.todoDao().deleteTodos();
@@ -87,9 +88,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Timer testCreateTimer() {
-        // Add a timer to work with
         pdb.timerDao().addTimer(
-                new Timer("Test timer",5000, 3000, 4000, 4)
+            new Timer("Test timer ",5000, 3000, 4000, 4)
         );
         List<Timer> timers = pdb.timerDao().getAllTimers();
         Timer timer = timers.get(0);
