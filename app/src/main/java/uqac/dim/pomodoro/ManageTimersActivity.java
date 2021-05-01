@@ -47,7 +47,8 @@ public class ManageTimersActivity extends AppCompatActivity implements TimerRecy
     @Override
     protected void onResume() {
         super.onResume();
-        adapter.notifyDataSetChanged();
+        if (adapter != null)
+            adapter.notifyDataSetChanged();
     }
 
     @Override

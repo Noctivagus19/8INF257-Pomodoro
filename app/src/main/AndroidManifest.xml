@@ -11,8 +11,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Pomodoro">
-        <activity android:name=".TimerEditActivity"></activity>
-        <activity android:name=".ManageTimersActivity" />
+        <activity
+            android:name=".TimerEditActivity"
+            android:label="Edit timer"
+            android:parentActivityName=".ManageTimersActivity"/>
+        <activity
+            android:name=".ManageTimersActivity"
+            android:label="Manager timers"
+            android:parentActivityName=".MainActivity"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,13 +28,12 @@
         </activity>
         <activity
             android:name=".ManageTodosActivity"
-            android:label="MANAGE TODOS"
+            android:label="Manage pomodoros"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
         <service android:name=".CountdownTimerService" />
     </application>
 
