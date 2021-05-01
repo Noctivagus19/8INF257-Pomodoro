@@ -1,10 +1,7 @@
 package uqac.dim.pomodoro.entities;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import androidx.room.ColumnInfo;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Entity
 public class Timer {
@@ -14,6 +11,9 @@ public class Timer {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
+
+    @ColumnInfo(name = "name")
+    public String name;
 
     @ColumnInfo(name = "workMs")
     public int workMs;
@@ -30,7 +30,8 @@ public class Timer {
     @ColumnInfo(name = "status")
     public String status;
 
-    public Timer(int workMs, int pauseMs, int longPauseMs, int pauseIntervals) {
+    public Timer(String name, int workMs, int pauseMs, int longPauseMs, int pauseIntervals) {
+        this.name = name;
         this.workMs = workMs;
         this.pauseMs = pauseMs;
         this.longPauseMs = longPauseMs;
@@ -42,6 +43,7 @@ public class Timer {
     public String toString() {
         return "Timer{" +
                 "id=" + this.getId() +
+                "name=" + this.getName() +
                 ", workMs='" + this.getWorkMs() + "'" +
                 ", pauseMs='" + this.getPauseMs() + "'" +
                 ", longPauseMs='" + this.getLongPauseMs() + "'" +
@@ -53,6 +55,10 @@ public class Timer {
     public int getId(){
         return this.id;
     }
+
+    public void setName(String name) { this.name = name; }
+
+    public String getName() { return this.name; }
 
     public void setWorkMs(int workMs){
         this.workMs = workMs;

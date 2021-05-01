@@ -13,6 +13,9 @@ public interface TimerDao {
     @Query("SELECT * FROM timer")
     List<Timer> getAllTimers();
 
+    @Query("SELECT * FROM timer WHERE status!='ARCHIVED'")
+    List<Timer> getNonArchivedTimers();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addTimer(Timer timer);
 
@@ -33,4 +36,7 @@ public interface TimerDao {
 
     @Query("SELECT * FROM timer WHERE status='ACTIVE'")
     Timer getActiveTimer();
+
+    @Query("SELECT * FROM timer WHERE id=:id")
+    Timer getTimer(int id);
 }

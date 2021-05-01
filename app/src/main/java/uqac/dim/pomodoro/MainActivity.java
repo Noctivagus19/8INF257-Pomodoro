@@ -10,6 +10,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -59,16 +61,16 @@ public class MainActivity extends AppCompatActivity {
 
         receiver = new TimerStatusReceiver();
 
-        ((Button)findViewById(R.id.leftButton))
+        findViewById(R.id.leftButton)
                 .setOnClickListener((View.OnClickListener) this::onLeftClick);
-        ((Button)findViewById(R.id.rightButton))
+        findViewById(R.id.rightButton)
                 .setOnClickListener((View.OnClickListener) this::onRightClick);
 
 
         pdb = PomodoroDB.getDatabase(getApplicationContext());
-        pdb.todoDao().deleteTodos();
+        //pdb.todoDao().deleteTodos();
         pdb.timerDao().deleteTimers();
-        pdb.categoryDao().deleteCategories();
+        //pdb.categoryDao().deleteCategories();
         testCreateTimer();
         initializeTimer();
 
@@ -79,21 +81,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
     private Timer testCreateTimer() {
-        // Add a timer to work with
         pdb.timerDao().addTimer(
-                new Timer(5000, 3000, 4000, 4)
+            new Timer("Test timer ",2*60000, 60000, 5*60000, 4)
         );
         List<Timer> timers = pdb.timerDao().getAllTimers();
         Timer timer = timers.get(0);
         timer.setActive();
         pdb.timerDao().updateTimer(timer);
-        Log.i("DIM", "Test timer: "+ timer.toString());
         return timer;
     }
 
     private void testInsertion() {
-        pdb.timerDao().addTimer(new Timer( 1000000000, 10000, 100000,100000));
+        pdb.timerDao().addTimer(new Timer( "Test timer", 1000000000, 10000, 100000,100000));
         for (Timer timer : pdb.timerDao().getAllTimers()) {
             Log.i("LOG", "INSERTION TIMER : " + timer.toString());
         }
@@ -266,9 +272,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void startManageTodosActivity(View view) {
-        Intent i = new Intent(this, ManageTodosActivity.class);
-        startActivityForResult(i, LAUNCH_MANAGETODOS_ACTIVITY);
+    public void startManageTodosActivity(MenuItem menuItem) {
+        startActivity(new Intent(this, ManageTodosActivity.class));
+    }
+
+    public void startManageTimersActivity(MenuItem menuItem) {
+        startActivity(new Intent(this, ManageTimersActivity.class));
     }
 
     @Override

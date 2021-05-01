@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">pomodoro</string>
+    <string name="app_name">Pomodoro app</string>
     <string name="start_btn">START</string>
     <string name="right_btn">STOP</string>
     <string name="left_btn">START</string>
@@ -9,5 +9,15 @@
     <string name="done_btn_lbl">DONE</string>
     <string name="start_btn_lbl">START</string>
     <string name="stop_btn_lbl">STOP</string>
-
+    <string name="menu_item_title_timer">Timer</string>
+    <string name="menu_item_title_pomodoros">Pomodoros</string>
+    <string name="menu_item_title_timers">Timers</string>
+    <string name="pause_interval_label"># pomodoros before long pause:</string>
+    <string name="fab_add_timer_descr">Add a timer</string>
+    <string name="edit_timer_name">Name:</string>
+    <string name="pomodoro_length_label">Pomodoro length (minutes):</string>
+    <string name="pause_length_label">Pause length (minutes):</string>
+    <string name="long_pause_length_label">Long pause length (minutes):</string>
+    <string name="save_btn">SAVE</string>
+    <string name="delete_btn">DELETE</string>
 </resources>
