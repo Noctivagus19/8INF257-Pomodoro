@@ -66,7 +66,6 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_managetodos);
-        Log.i("LOG", "MANAGE TODOS ACTIVITY ONCREATE");
         pdb = PomodoroDB.getDatabase(getApplicationContext());
         initRecyclerView();
         initEditSpinner(0);
@@ -126,7 +125,6 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
                 icon.setTag(position);
 
                 textView.setText(data);
-                Log.i("LOG","DATA : "+ data);
 
                 return convertView;
             }
@@ -236,7 +234,6 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
 
     public void openOptionsTodo(View view, Todo todo, int position){
 
-        Log.i("LOG","Open options todo for " + todo.getDescription());
         PopupMenu popup = new PopupMenu(ManageTodosActivity.this, view);
 
         if (position == MyRecyclerViewAdapter.getEditRow()){
@@ -250,14 +247,12 @@ public class ManageTodosActivity extends AppCompatActivity implements MyRecycler
 
                 switch((String)item.getTitle()){
                     case "Supprimer":
-                        Log.i("LOG","clicked remove todo for " + todo.getDescription());
                         pdb.todoDao().deleteTodo(todo);
                         todos = pdb.todoDao().getActiveTodos();
                         rvadapter.updateData(todos);
                         break;
 
                     case "Editer":
-                        Log.i("LOG","clicked edit todo for " + todo.getDescription());
                         MyRecyclerViewAdapter.setEditRow(position);
                         rvadapter.updateData(todos);
                         break;

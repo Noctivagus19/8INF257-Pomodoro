@@ -53,7 +53,6 @@ public class CountdownTimerService extends Service {
       pdb = PomodoroDB.getDatabase(getApplicationContext());
 
       showNotification();
-      Log.i("DIM", "The service has been created!");
    }
 
    @Nullable
