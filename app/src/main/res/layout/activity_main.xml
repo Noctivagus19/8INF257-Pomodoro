@@ -34,6 +34,21 @@
                     android:textSize="50sp" />
 
                 <TextView
+                    android:id="@+id/category_display"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@id/timer_progress_bar"
+                    android:layout_alignTop="@id/timer_progress_bar"
+                    android:layout_alignEnd="@id/timer_progress_bar"
+                    android:layout_alignBottom="@id/timer_progress_bar"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="9dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="91dp"
+                    android:gravity="center"
+                    android:textSize="15sp" />
+
+                <TextView
                     android:id="@+id/task_display"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -43,20 +58,6 @@
                     android:layout_alignBottom="@id/timer_progress_bar"
                     android:layout_marginTop="100dp"
                     android:gravity="center"
-                    android:text="Task name here"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/task_total_display"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignStart="@id/timer_progress_bar"
-                    android:layout_alignTop="@id/timer_progress_bar"
-                    android:layout_alignEnd="@id/timer_progress_bar"
-                    android:layout_alignBottom="@id/timer_progress_bar"
-                    android:layout_marginTop="160dp"
-                    android:gravity="center"
-                    android:text="2/3"
                     android:textSize="15sp" />
 
                 <LinearLayout

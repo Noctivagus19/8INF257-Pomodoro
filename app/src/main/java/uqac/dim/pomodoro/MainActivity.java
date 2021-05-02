@@ -72,6 +72,15 @@ public class MainActivity extends AppCompatActivity {
         //pdb.timerDao().deleteTimers();
         //pdb.categoryDao().deleteCategories();
         //testCreateTimer();
+
+/*
+        for(int i=0;i<4;i++) {
+            Todo todo = new Todo("test", "2021-05-02", pdb.categoryDao().getActiveCategories().get(0).getId());
+            todo.setCompletionTime(60000);
+            pdb.todoDao().addTodo(todo);
+        }
+*/
+
         initializeTimer();
 
 //        testInsertion();
@@ -280,6 +289,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, ManageTimersActivity.class));
     }
 
+    public void startStatsActivity(MenuItem menuItem) {
+        startActivity(new Intent(this, StatsActivity.class));
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -328,12 +341,22 @@ public class MainActivity extends AppCompatActivity {
                     redrawProgressBar(workPbId);
                     ((TextView)findViewById(R.id.time_display)).setText(CountdownTimerService.toHms(activeTimer.workMs));
                     ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgress(100);
-                    ((TextView)findViewById(R.id.task_display)).setText(topTodo.getDescription());
+                    int categoryId = topTodo.getCategoryId();
+                    category = pdb.categoryDao().findById(categoryId);
+                    ((TextView)findViewById(R.id.category_display)).setText(truncateText(category.getName()));
+                    ((TextView)findViewById(R.id.task_display)).setText(truncateText(topTodo.getDescription()));
                     setButtons();
                     ((Button)findViewById(R.id.leftButton)).setEnabled(true);
                 }
             }
         }
+    }
+
+    private String truncateText(String text) {
+        if (text.length() > 30) {
+            return text.substring(0,26) + "...";
+        }
+        return text;
     }
 
     public void updateTaskDisplay(String todoDescription){

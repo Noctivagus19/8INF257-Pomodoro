@@ -36,4 +36,7 @@ public interface TodoDao {
 
     @Query("SELECT * FROM todo WHERE Todo.id=:id")
     Todo findById(int id);
+
+    @Query("SELECT * FROM todo WHERE Todo.completionTime!=-1")
+    List<Todo> getCompletedTodos();
 }

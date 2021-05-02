@@ -12,13 +12,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pomodoro">
         <activity
+            android:name=".StatsActivity"
+            android:label="Statistics"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".TimerEditActivity"
             android:label="Edit timer"
-            android:parentActivityName=".ManageTimersActivity"/>
+            android:parentActivityName=".ManageTimersActivity" />
         <activity
             android:name=".ManageTimersActivity"
             android:label="Manager timers"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,6 +38,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
         <service android:name=".CountdownTimerService" />
     </application>
 
