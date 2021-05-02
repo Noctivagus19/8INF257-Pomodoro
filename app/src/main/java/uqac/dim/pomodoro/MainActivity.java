@@ -72,14 +72,7 @@ public class MainActivity extends AppCompatActivity {
         //pdb.timerDao().deleteTimers();
         //pdb.categoryDao().deleteCategories();
         //testCreateTimer();
-
-/*
-        for(int i=0;i<4;i++) {
-            Todo todo = new Todo("test", "2021-05-02", pdb.categoryDao().getActiveCategories().get(0).getId());
-            todo.setCompletionTime(60000);
-            pdb.todoDao().addTodo(todo);
-        }
-*/
+        // testCreateCompletedPomodoros();
 
         initializeTimer();
 
@@ -94,6 +87,20 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
+    }
+
+    private void testCreateCompletedPomodoros() {
+        for(int i=0;i<4;i++) {
+            Todo todo = new Todo("test", "2021-05-02", pdb.categoryDao().getActiveCategories().get(0).getId());
+            todo.setCompletionTime(60000);
+            pdb.todoDao().addTodo(todo);
+        }
+
+        for(int i=0;i<2;i++) {
+            Todo todo = new Todo("test", "2021-05-01", pdb.categoryDao().getActiveCategories().get(0).getId());
+            todo.setCompletionTime(80000);
+            pdb.todoDao().addTodo(todo);
+        }
     }
 
     private Timer testCreateTimer() {
@@ -293,27 +300,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, StatsActivity.class));
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.i("LOG", "MAIN ACTIVITYRESULT");
-
-        if (requestCode == LAUNCH_MANAGETODOS_ACTIVITY) {
-            if(resultCode == MainActivity.RESULT_OK){
-/*
-                int todoId =data.getIntExtra(ManageTodosActivity.EXTRA_TODO_ID, -1);
-                String todoDescription = data.getStringExtra(ManageTodosActivity.EXTRA_TODO_DESCRIPTION);
-                Log.i("LOG", "EXTRA RECU : TODO ID:" + todoId);
-                Log.i("LOG", "EXTRA RECU : TODO DESCRIPTION:" + todoDescription);
-                updateTaskDisplay(todoDescription);
-*/
-            }
-            if (resultCode == MainActivity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
-        }
-    }//onActivityResult
-
     private void setButtons() {
         Button leftBtn = ((Button)findViewById(R.id.leftButton));
         Button rightBtn = ((Button)findViewById(R.id.rightButton));
@@ -324,9 +310,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initializeTimer() {
-        ((TextView)findViewById(R.id.time_display)).setText("00:00");
+        ((TextView)findViewById(R.id.time_display)).setText("00:00:00");
         ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgress(0);
         ((TextView)findViewById(R.id.task_display)).setText("");
+        ((TextView)findViewById(R.id.category_display)).setText("");
         setButtons();
         timerStatus = "STOPPED";
     }
@@ -359,11 +346,6 @@ public class MainActivity extends AppCompatActivity {
         return text;
     }
 
-    public void updateTaskDisplay(String todoDescription){
-        TextView taskDisplay = (TextView)findViewById(R.id.task_display);
-        taskDisplay.setText(todoDescription);
-    }
-
     private class TimerStatusReceiver extends BroadcastReceiver {
        @Override
        public void onReceive(Context context, Intent intent) {
@@ -378,7 +360,6 @@ public class MainActivity extends AppCompatActivity {
                    String sTotalTime = intent.getStringExtra("TOTALTIME");
                    if (rawTime != null) {
                        double totalTime = Double.parseDouble(sTotalTime);
-                       Log.i("LOG", rawTime);
                        int thousand = Integer.parseInt(rawTime)/1000*1000;
 
                        int completionPercentage = (int)(Math.round(((long) thousand / totalTime) * 100.0));
@@ -403,7 +384,6 @@ public class MainActivity extends AppCompatActivity {
                        setTimerWithTopTask();
                    }
                }
-               Log.i("LOG", "Timer Type: "+intent.getStringExtra("TIMERTYPE")+" Timer Status: "+timerStatus);
 
                if (timerStatus.equals("STOPPED")) {
                    setTimerWithTopTask();
