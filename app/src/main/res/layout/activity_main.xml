@@ -60,22 +60,6 @@
                     android:gravity="center"
                     android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/task_total_display"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignStart="@id/timer_progress_bar"
-                    android:layout_alignTop="@id/timer_progress_bar"
-                    android:layout_alignEnd="@id/timer_progress_bar"
-                    android:layout_alignBottom="@id/timer_progress_bar"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="157dp"
-                    android:layout_marginEnd="0dp"
-                    android:layout_marginBottom="3dp"
-                    android:gravity="center"
-                    android:text="2/3"
-                    android:textSize="15sp" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
