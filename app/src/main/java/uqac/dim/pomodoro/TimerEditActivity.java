@@ -3,8 +3,10 @@ package uqac.dim.pomodoro;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -60,25 +62,41 @@ public class TimerEditActivity extends AppCompatActivity {
     }
 
     public void saveTimer(View view) {
-        Timer timer = new Timer(
-                String.valueOf(nameField.getText()),
-                toMs(Integer.parseInt(String.valueOf(pomodoroField.getText()))),
-                toMs(Integer.parseInt(String.valueOf(pauseField.getText()))),
-                toMs(Integer.parseInt(String.valueOf(longPauseField.getText()))),
-                Integer.parseInt(String.valueOf(pauseIntervalsField.getText()))
-        );
-        if (isNew) {
-            pdb.timerDao().addTimer(timer);
+        String name = String.valueOf(nameField.getText());
+        String pomodoro = String.valueOf(pomodoroField.getText());
+        String pause = String.valueOf(pauseField.getText());
+        String longPause = String.valueOf(longPauseField.getText());
+        String pauseIntervals = String.valueOf(pauseIntervalsField.getText());
+        if (!name.isEmpty() &&
+                !pomodoro.isEmpty() &&
+                !pause.isEmpty() &&
+                !longPause.isEmpty() &&
+                !pauseIntervals.isEmpty()
+        ) {
+            Timer timer = new Timer(
+                    name,
+                    toMs(Integer.parseInt(pomodoro)),
+                    toMs(Integer.parseInt(pause)),
+                    toMs(Integer.parseInt(longPause)),
+                    Integer.parseInt(pauseIntervals)
+            );
+            if (isNew) {
+                pdb.timerDao().addTimer(timer);
+            } else {
+                Timer existingTimer = pdb.timerDao().getTimer(timerId);
+                existingTimer.setName(timer.getName());
+                existingTimer.setWorkMs(timer.getWorkMs());
+                existingTimer.setPauseMs(timer.getPauseMs());
+                existingTimer.setLongPauseMs(timer.getLongPauseMs());
+                existingTimer.setPauseIntervals(timer.getPauseIntervals());
+                pdb.timerDao().updateTimer(timer);
+            }
+            startActivity(new Intent(this, ManageTimersActivity.class));
         } else {
-            Timer existingTimer = pdb.timerDao().getTimer(timerId);
-            existingTimer.setName(timer.getName());
-            existingTimer.setWorkMs(timer.getWorkMs());
-            existingTimer.setPauseMs(timer.getPauseMs());
-            existingTimer.setLongPauseMs(timer.getLongPauseMs());
-            existingTimer.setPauseIntervals(timer.getPauseIntervals());
-            pdb.timerDao().updateTimer(timer);
+            Toast toast = Toast.makeText(TimerEditActivity.this, "Fields can't be empty." , Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.BOTTOM, 0, 140);
+            toast.show();
         }
-        startActivity(new Intent(this, ManageTimersActivity.class));
     }
 
     public void deleteTimer(View view) {

@@ -20,4 +20,5 @@
     <string name="long_pause_length_label">Long pause length (minutes):</string>
     <string name="save_btn">SAVE</string>
     <string name="delete_btn">DELETE</string>
+    <string name="checkmark_descr">Indicate the selected timer</string>
 </resources>

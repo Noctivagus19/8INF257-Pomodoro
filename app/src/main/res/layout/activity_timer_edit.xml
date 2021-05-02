@@ -115,6 +115,7 @@
             android:layout_marginHorizontal="15dp"
             android:layout_weight="85"
             android:text="@string/delete_btn"
+            android:backgroundTint="@color/red"
             android:onClick="deleteTimer" />
     </LinearLayout>
 </LinearLayout>

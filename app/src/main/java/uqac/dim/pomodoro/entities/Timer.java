@@ -5,9 +5,9 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class Timer {
-    private static final String ACTIVE = "ACTIVE";
-    private static final String SELECTABLE = "SELECTABLE";
-    private static final String ARCHIVED = "ARCHIVED";
+    public static final String ACTIVE = "ACTIVE";
+    public static final String SELECTABLE = "SELECTABLE";
+    public static final String ARCHIVED = "ARCHIVED";
 
     @PrimaryKey(autoGenerate = true)
     public int id;
