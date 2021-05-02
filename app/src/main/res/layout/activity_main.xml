@@ -46,7 +46,6 @@
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="91dp"
                     android:gravity="center"
-                    android:text="pouette"
                     android:textSize="15sp" />
 
                 <TextView
@@ -59,7 +58,6 @@
                     android:layout_alignBottom="@id/timer_progress_bar"
                     android:layout_marginTop="100dp"
                     android:gravity="center"
-                    android:text="Task name here"
                     android:textSize="15sp" />
 
                 <TextView
