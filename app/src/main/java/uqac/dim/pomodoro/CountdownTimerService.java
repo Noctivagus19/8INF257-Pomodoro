@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -53,7 +52,6 @@ public class CountdownTimerService extends Service {
       pdb = PomodoroDB.getDatabase(getApplicationContext());
 
       showNotification();
-      Log.i("DIM", "The service has been created!");
    }
 
    @Nullable
@@ -118,8 +116,6 @@ public class CountdownTimerService extends Service {
 
                toggleTimerType();
                startTimer();
-            } else {
-               Log.i("LOG", "This is a test!");
             }
          }
       };
