@@ -328,12 +328,22 @@ public class MainActivity extends AppCompatActivity {
                     redrawProgressBar(workPbId);
                     ((TextView)findViewById(R.id.time_display)).setText(CountdownTimerService.toHms(activeTimer.workMs));
                     ((ProgressBar)findViewById(R.id.timer_progress_bar)).setProgress(100);
-                    ((TextView)findViewById(R.id.task_display)).setText(topTodo.getDescription());
+                    int categoryId = topTodo.getCategoryId();
+                    category = pdb.categoryDao().findById(categoryId);
+                    ((TextView)findViewById(R.id.category_display)).setText(truncateText(category.getName()));
+                    ((TextView)findViewById(R.id.task_display)).setText(truncateText(topTodo.getDescription()));
                     setButtons();
                     ((Button)findViewById(R.id.leftButton)).setEnabled(true);
                 }
             }
         }
+    }
+
+    private String truncateText(String text) {
+        if (text.length() > 30) {
+            return text.substring(0,26) + "...";
+        }
+        return text;
     }
 
     public void updateTaskDisplay(String todoDescription){
