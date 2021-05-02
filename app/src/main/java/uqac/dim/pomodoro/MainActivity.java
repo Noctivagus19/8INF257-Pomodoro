@@ -69,9 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
         pdb = PomodoroDB.getDatabase(getApplicationContext());
         //pdb.todoDao().deleteTodos();
-        pdb.timerDao().deleteTimers();
+        //pdb.timerDao().deleteTimers();
         //pdb.categoryDao().deleteCategories();
-        testCreateTimer();
+        //testCreateTimer();
         initializeTimer();
 
 //        testInsertion();

@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
+
 import java.util.List;
 
 import uqac.dim.pomodoro.entities.Timer;
@@ -17,6 +19,7 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
     private List<Timer> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    private SwitchClickListener mSwitchClickListener;
 
     TimerRecyclerViewAdapter(Context context, List<Timer> data) {
         this.mInflater = LayoutInflater.from(context);
@@ -43,6 +46,10 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
         holder.longPauseLength.setText(longPauseLength);
         String pauseIntervals = "" + mData.get(position).getPauseIntervals();
         holder.pauseIntervals.setText(pauseIntervals);
+        if (mData.get(position).getStatus().equals(Timer.ACTIVE))
+            holder.activeSwitch.setChecked(true);
+        else
+            holder.activeSwitch.setChecked(false);
     }
 
     // total number of rows
@@ -58,6 +65,7 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
         TextView pauseLength;
         TextView longPauseLength;
         TextView pauseIntervals;
+        SwitchMaterial activeSwitch;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -66,14 +74,23 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
             pauseLength = itemView.findViewById(R.id.pauseLength);
             longPauseLength = itemView.findViewById(R.id.longPauseLength);
             pauseIntervals = itemView.findViewById(R.id.pauseIntervals);
+            activeSwitch = itemView.findViewById(R.id.activeSwitch);
+            activeSwitch.setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            // TODO: come back to getAdapterPosition() if getAbsoluteAdapterPosition() doesn't work
-            if (mClickListener != null) mClickListener.onItemClick(view, getAbsoluteAdapterPosition());
+            if (view instanceof SwitchMaterial) {
+                if (mSwitchClickListener != null)
+                    mSwitchClickListener.onSwitchClick(view, getAbsoluteAdapterPosition());
+            }
+            else {
+                if (mClickListener != null)
+                    mClickListener.onItemClick(view, getAbsoluteAdapterPosition());
+            }
         }
+
     }
 
     // return data at click position
@@ -86,8 +103,20 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
         this.mClickListener = itemClickListener;
     }
 
-    // parent activity implement this methods to handle click events
+    void setSwitchClickListener(SwitchClickListener switchClickListener) {
+        this.mSwitchClickListener = switchClickListener;
+    }
+
+    // parent activity implement these methods to handle click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
+    }
+
+    public interface SwitchClickListener {
+        void onSwitchClick(View view, int position);
+    }
+
+    public void updateData(List<Timer> timers) {
+        mData = timers;
     }
 }
