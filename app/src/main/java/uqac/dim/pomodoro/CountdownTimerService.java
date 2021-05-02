@@ -69,13 +69,7 @@ public class CountdownTimerService extends Service {
       String mm = String.format("%02d", TimeUnit.MILLISECONDS.toMinutes(ms) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(ms)));
       String ss = String.format("%02d", TimeUnit.MILLISECONDS.toSeconds(ms) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms)));
 
-      String hms = "";
-
-      if (!hh.equals("00")) {
-         hms = hms + hh + ":";
-      }
-
-      return hms + mm + ":" + ss;
+      return hh + ":" + mm + ":" + ss;
    }
 
    @Override

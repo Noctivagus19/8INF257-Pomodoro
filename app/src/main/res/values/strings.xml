@@ -21,4 +21,8 @@
     <string name="save_btn">SAVE</string>
     <string name="delete_btn">DELETE</string>
     <string name="checkmark_descr">Indicate the selected timer</string>
+    <string name="menu_item_title_stats">Stats</string>
+    <string name="pomodoro_count_label"># of completed pomodoros:</string>
+    <string name="avg_pomodoro_time_label">Average pomodoro time:</string>
+    <string name="most_pomodoros_completed_label">Day with most pomodoros completed:</string>
 </resources>

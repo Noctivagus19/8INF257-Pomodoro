@@ -72,6 +72,15 @@ public class MainActivity extends AppCompatActivity {
         //pdb.timerDao().deleteTimers();
         //pdb.categoryDao().deleteCategories();
         //testCreateTimer();
+
+/*
+        for(int i=0;i<4;i++) {
+            Todo todo = new Todo("test", "2021-05-02", pdb.categoryDao().getActiveCategories().get(0).getId());
+            todo.setCompletionTime(60000);
+            pdb.todoDao().addTodo(todo);
+        }
+*/
+
         initializeTimer();
 
 //        testInsertion();
@@ -278,6 +287,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void startManageTimersActivity(MenuItem menuItem) {
         startActivity(new Intent(this, ManageTimersActivity.class));
+    }
+
+    public void startStatsActivity(MenuItem menuItem) {
+        startActivity(new Intent(this, StatsActivity.class));
     }
 
     @Override
