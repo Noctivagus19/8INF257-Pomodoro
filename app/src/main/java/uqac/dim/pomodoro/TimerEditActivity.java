@@ -81,6 +81,8 @@ public class TimerEditActivity extends AppCompatActivity {
                     Integer.parseInt(pauseIntervals)
             );
             if (isNew) {
+                if (pdb.timerDao().getNonArchivedTimers().size() == 0)
+                    timer.setActive();
                 pdb.timerDao().addTimer(timer);
             } else {
                 Timer existingTimer = pdb.timerDao().getTimer(timerId);
